@@ -23,10 +23,10 @@ public class AAController {
         this.accountAggregatorService = accountAggregatorService;
     }
 
-    @PostMapping(path = "/consent",
+    @PostMapping(path = "/consent/periodic",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ConsentResponse initiateConsentRequest(ConsentRequest request) {
+    public ConsentResponse initiatePeriodicConsentRequest(ConsentRequest request) {
         return accountAggregatorService.initiateConsent(request);
     }
 

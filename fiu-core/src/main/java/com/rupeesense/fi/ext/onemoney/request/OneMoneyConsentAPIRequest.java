@@ -176,7 +176,7 @@ public class OneMoneyConsentAPIRequest {
       .build();
 
 
-  public static OneMoneyConsentAPIRequest generateConsentRequest(String dataConsumerId, String customerId) {
+  public static OneMoneyConsentAPIRequest generatePeriodicConsentRequest(String dataConsumerId, String customerId) {
 
     ConsentDetail consentDetail = ConsentDetail.builder()
         .consentStart(LocalDateTime.now())
