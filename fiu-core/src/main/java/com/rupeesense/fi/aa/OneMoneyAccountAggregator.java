@@ -2,8 +2,8 @@ package com.rupeesense.fi.aa;
 
 import static com.rupeesense.fi.CoreModule.ONE_MONEY_CLIENT_NAME;
 
-import com.rupeesense.fi.api.onemoney.request.OneMoneyConsentAPIRequest;
-import com.rupeesense.fi.api.onemoney.response.OneMoneyConsentAPIResponse;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
+import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentAPIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.stereotype.Component;

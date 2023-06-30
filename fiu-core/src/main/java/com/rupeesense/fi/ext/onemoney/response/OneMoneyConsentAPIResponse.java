@@ -1,4 +1,4 @@
-package com.rupeesense.fi.api.onemoney.response;
+package com.rupeesense.fi.ext.onemoney.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
