@@ -26,7 +26,7 @@ public class OneMoneyAccountAggregator {
 
   public OneMoneyConsentAPIResponse initiateConsent(OneMoneyConsentAPIRequest request) {
     return webClient.post()
-        .uri("/aa/consent")
+        .uri("/aa/Consent")
         .bodyValue(request)
         .retrieve()
         .onStatus(HttpStatus::isError, this::createException)

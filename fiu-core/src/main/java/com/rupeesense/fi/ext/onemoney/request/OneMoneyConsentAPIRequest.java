@@ -3,7 +3,9 @@ package com.rupeesense.fi.ext.onemoney.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +20,9 @@ public class OneMoneyConsentAPIRequest {
   @JsonProperty("ver")
   private String ver;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
   @JsonProperty("timestamp")
-  private String timestamp;
+  private LocalDateTime timestamp;
 
   @JsonProperty("txnid")
   private String txnid;
@@ -176,7 +179,8 @@ public class OneMoneyConsentAPIRequest {
       .build();
 
 
-  public static OneMoneyConsentAPIRequest generatePeriodicConsentRequest(String dataConsumerId, String customerId) {
+  public static OneMoneyConsentAPIRequest generatePeriodicConsentRequest(String dataConsumerId,
+      String customerId) {
 
     ConsentDetail consentDetail = ConsentDetail.builder()
         .consentStart(LocalDateTime.now())
@@ -189,13 +193,18 @@ public class OneMoneyConsentAPIRequest {
         .dataLife(new DataLife("YEAR", 3))
         .frequency(new Frequency("DATE", 2))
         .purpose(PURPOSE_102)
-        .fiDataRange(new FIDataRange(LocalDateTime.now().minusDays(10), LocalDateTime.now()))
-        .fiTypes(List.of(FIType.values())) //use all FI types //TODO: verify
+        .dataFilter(Arrays.asList(new DataFilter("TRANSACTIONAMOUNT", ">=", "1")))
+        .fiDataRange(new FIDataRange(LocalDateTime.now(), LocalDateTime.now()))
+        .fiTypes(List.of(FIType.DEPOSIT)) //use all FI types //TODO: verify
         .build();
 
     return new OneMoneyConsentAPIRequest("1.1.2",
-        "timestamp",
-        "txnID", consentDetail);
+        LocalDateTime.now(),
+        generateUUID(), consentDetail);
+  }
+
+  private static String generateUUID() {
+    return UUID.randomUUID().toString();
   }
 
 }

@@ -26,7 +26,7 @@ public class AccountAggregatorService {
 
   public ConsentResponse initiateConsent(ConsentRequest consentRequest) {
     OneMoneyConsentAPIRequest oneMoneyConsentAPIRequest = OneMoneyConsentAPIRequest
-        .generatePeriodicConsentRequest("SEL0308", consentRequest.getUserVpa()); //TODO: don't hardcode
+        .generatePeriodicConsentRequest("RUP0328", consentRequest.getUserVpa()); //TODO: don't hardcode
     OneMoneyConsentAPIResponse consentAPIResponse = oneMoneyAccountAggregator.initiateConsent(
         oneMoneyConsentAPIRequest);
     Consent consent = new Consent();
