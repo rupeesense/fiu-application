@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AccountAggregatorService {
 
-  OneMoneyAccountAggregator oneMoneyAccountAggregator;
+  private final OneMoneyAccountAggregator oneMoneyAccountAggregator;
 
   @Autowired
   public AccountAggregatorService(OneMoneyAccountAggregator oneMoneyAccountAggregator) {
