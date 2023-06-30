@@ -1,7 +1,8 @@
 package com.rupeesense.fi.controllers;
 
 import com.rupeesense.fi.aa.AccountAggregatorService;
-import com.rupeesense.fi.request.ConsentRequest;
+import com.rupeesense.fi.api.request.ConsentRequest;
+import com.rupeesense.fi.api.response.ConsentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,11 +23,10 @@ public class AAController {
         this.accountAggregatorService = accountAggregatorService;
     }
 
-    //TODO: change return type
     @PostMapping(path = "/consent",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public String initiateConsentRequest(ConsentRequest request) {
+    public ConsentResponse initiateConsentRequest(ConsentRequest request) {
         return accountAggregatorService.initiateConsent(request);
     }
 

@@ -34,9 +34,4 @@ public class Consent {
   @Column(name = "status", nullable = false)
   private ConsentStatus status;
 
-  public enum ConsentStatus {
-    GRANTED,
-    DENIED,
-    PENDING
-  }
 }

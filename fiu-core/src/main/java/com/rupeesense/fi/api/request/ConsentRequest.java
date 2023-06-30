@@ -1,4 +1,4 @@
-package com.rupeesense.fi.request;
+package com.rupeesense.fi.api.request;
 
 import com.rupeesense.fi.aa.AccountAggregatorIdentifier;
 import lombok.AllArgsConstructor;
