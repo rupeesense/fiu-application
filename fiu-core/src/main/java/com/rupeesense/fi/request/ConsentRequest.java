@@ -1,17 +1,17 @@
 package com.rupeesense.fi.request;
 
-import com.rupeesense.fi.aa.AccountAggregator;
+import com.rupeesense.fi.aa.AccountAggregatorIdentifier;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ConsentRequest {
 
     private String userVpa;
 
-    private AccountAggregator accountAggregator;
-//
-//    private
+    private AccountAggregatorIdentifier accountAggId = AccountAggregatorIdentifier.ONEMONEY;
 
 }

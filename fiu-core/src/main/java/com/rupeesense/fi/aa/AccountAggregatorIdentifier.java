@@ -1,5 +1,5 @@
 package com.rupeesense.fi.aa;
 
-public enum AccountAggregator {
+public enum AccountAggregatorIdentifier {
   ONEMONEY
 }
