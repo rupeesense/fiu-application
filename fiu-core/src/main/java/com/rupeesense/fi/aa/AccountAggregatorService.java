@@ -1,6 +1,6 @@
 package com.rupeesense.fi.aa;
 
-import com.rupeesense.fi.api.request.onemoney.ConsentAPIRequest;
+import com.rupeesense.fi.api.onemoney.request.OneMoneyConsentAPIRequest;
 import com.rupeesense.fi.request.ConsentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class AccountAggregatorService {
   }
 
   public String initiateConsent(ConsentRequest consentRequest) {
-    ConsentAPIRequest consentAPIRequest = ConsentAPIRequest.generateConsentRequest("SEL0308", consentRequest.getUserVpa()); //TODO: don't hardcode
-    return oneMoneyAccountAggregator.initiateConsent(consentAPIRequest);
+    OneMoneyConsentAPIRequest oneMoneyConsentAPIRequest = OneMoneyConsentAPIRequest.generateConsentRequest("SEL0308", consentRequest.getUserVpa()); //TODO: don't hardcode
+    return oneMoneyAccountAggregator.initiateConsent(oneMoneyConsentAPIRequest).getHandle();
   }
 }

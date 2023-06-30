@@ -1,21 +1,19 @@
-package com.rupeesense.fi.api.request.onemoney;
+package com.rupeesense.fi.api.onemoney.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class ConsentAPIRequest {
+public class OneMoneyConsentAPIRequest {
 
   @JsonProperty("ver")
   private String ver;
@@ -178,7 +176,7 @@ public class ConsentAPIRequest {
       .build();
 
 
-  public static ConsentAPIRequest generateConsentRequest(String dataConsumerId, String customerId) {
+  public static OneMoneyConsentAPIRequest generateConsentRequest(String dataConsumerId, String customerId) {
 
     ConsentDetail consentDetail = ConsentDetail.builder()
         .consentStart(LocalDateTime.now())
@@ -195,7 +193,7 @@ public class ConsentAPIRequest {
         .fiTypes(List.of(FIType.values())) //use all FI types //TODO: verify
         .build();
 
-    return new ConsentAPIRequest("1.1.2",
+    return new OneMoneyConsentAPIRequest("1.1.2",
         "timestamp",
         "txnID", consentDetail);
   }

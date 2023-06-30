@@ -2,7 +2,8 @@ package com.rupeesense.fi.aa;
 
 import static com.rupeesense.fi.CoreModule.ONE_MONEY_CLIENT_NAME;
 
-import com.rupeesense.fi.api.request.onemoney.ConsentAPIRequest;
+import com.rupeesense.fi.api.onemoney.request.OneMoneyConsentAPIRequest;
+import com.rupeesense.fi.api.onemoney.response.OneMoneyConsentAPIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.stereotype.Component;
@@ -18,12 +19,13 @@ public class OneMoneyAccountAggregator {
     this.webClient = webClient;
   }
 
-  public String initiateConsent(ConsentAPIRequest request) {
+  //TODO: add error handling
+  public OneMoneyConsentAPIResponse initiateConsent(OneMoneyConsentAPIRequest request) {
     return webClient.post()
         .uri("/aa/consent")
         .bodyValue(request)
         .retrieve()
-        .bodyToMono(String.class)
+        .bodyToMono(OneMoneyConsentAPIResponse.class)
         .block();
   }
 }

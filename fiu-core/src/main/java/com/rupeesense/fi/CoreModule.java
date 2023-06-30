@@ -18,5 +18,4 @@ public class CoreModule {
         .defaultHeader("client_api_key", "a443370460ab1ed74ce411a1e38e1c5201a3a6c4a3be1a36d86558a0a6fda48261d02ab9")
         .build();
   }
-
 }
