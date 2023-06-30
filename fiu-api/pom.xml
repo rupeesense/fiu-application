@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.rupeesense.fi</groupId>
         <artifactId>fiu-service</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${project.version}</version>
     </parent>
     <artifactId>fiu-api</artifactId>
 
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.rupeesense.fi</groupId>
             <artifactId>fiu-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version> <!--TODO: replace version here by project version-->
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

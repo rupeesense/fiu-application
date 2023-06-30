@@ -13,7 +13,7 @@
 
   <groupId>com.rupeesense.fi</groupId>
   <artifactId>fiu-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${project.version}</version>
   <name>fiu-svc</name>
   <packaging>pom</packaging>
 
@@ -26,6 +26,7 @@
   <properties>
     <java.version>11</java.version>
     <spring.boot.version>2.7.10</spring.boot.version>
+    <project.version>0.0.1-SNAPSHOT</project.version>
   </properties>
 
 
