@@ -1,0 +1,85 @@
+package com.rupeesense.fi.api.request;
+
+import com.rupeesense.fi.FIUServiceConfig;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Category;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentDetail;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentType;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Customer;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.DataConsumer;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.DataFilter;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.DataLife;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.FIType;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Frequency;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Purpose;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.FIDataRange;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class OneMoneyRequestGenerator {
+
+
+  //reference: https://api.rebit.co.in/purpose
+  public static final Purpose PURPOSE_102 = Purpose.builder().code("102")
+      .refUri("https://api.rebit.org.in/aa/purpose/102.xml")
+      .text("Customer spending patterns, budget or other reportings")
+      .category(new Category("Purpose Category")) //TODO: REVIEW
+      .build();
+
+  public static final Frequency FREQUENCY_TWICE_IN_AN_HOUR = Frequency.builder()
+      .unit("HOUR").value(1).build();
+
+  public static final DataLife DATA_LIFE_3_YEARS = new DataLife("YEAR", 3);
+
+  public static final DataFilter DATA_FILTER_TRANSACTION_AMOUNT_GREATER_THAN_1 = new DataFilter(
+      "TRANSACTIONAMOUNT", ">", "1");
+
+  public static final String STORE_CONSENT_MODE = "STORE";
+
+  public static final String PERIODIC_FETCH_TYPE = "PERIODIC";
+
+  public static final List<ConsentType> ALL_CONSENT_TYPES = List.of(ConsentType.values());
+
+  public static final List<FIType> SUPPORTED_FI_TYPES = List.of(FIType.values());
+
+  public static final TemporalAmount CONSENT_EXPIRY_DURATION = Duration.ofDays(365);
+
+  private final FIUServiceConfig fiuServiceConfig;
+
+  @Autowired
+  public OneMoneyRequestGenerator(FIUServiceConfig fiuServiceConfig) {
+    this.fiuServiceConfig = fiuServiceConfig;
+  }
+
+  public OneMoneyConsentAPIRequest generatePeriodicConsentRequestForUser(String customerId) {
+
+    LocalDateTime currentTime = LocalDateTime.now();
+
+    ConsentDetail consentDetail = ConsentDetail.builder()
+        .consentStart(currentTime)
+        .consentExpiry(currentTime.plus(CONSENT_EXPIRY_DURATION))
+        .consentMode(STORE_CONSENT_MODE)
+        .fetchType(PERIODIC_FETCH_TYPE)
+        .dataConsumer(new DataConsumer(fiuServiceConfig.getFiuId()))
+        .customer(new Customer(customerId))
+        .consentTypes(ALL_CONSENT_TYPES)
+        .dataLife(DATA_LIFE_3_YEARS)
+        .frequency(FREQUENCY_TWICE_IN_AN_HOUR)
+        .purpose(PURPOSE_102)
+        .fiDataRange(FIDataRange.builder()
+            .from(currentTime)
+            .to(currentTime.plus(CONSENT_EXPIRY_DURATION))
+            .build())
+        .dataFilter(List.of(DATA_FILTER_TRANSACTION_AMOUNT_GREATER_THAN_1))
+        .fiTypes(SUPPORTED_FI_TYPES)
+        .build();
+
+    return new OneMoneyConsentAPIRequest(consentDetail);
+  }
+
+}
