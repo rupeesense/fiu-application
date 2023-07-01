@@ -21,11 +21,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @Entity
 @Table(name = "consent")
-public class Consent {
+public class ConsentHandle {
 
   @Id
-  @Column(name = "consent_request_id", nullable = false)
-  private String consentRequestId;
+  @Column(name = "consent_handle_id", nullable = false)
+  private String consentHandleId;
 
   @Column(name = "consent_id")
   private String consentId;
@@ -37,6 +37,13 @@ public class Consent {
   @Column(name = "status", nullable = false)
   private ConsentStatus status;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "account_aggregator", nullable = false)
+  private AccountAggregatorIdentifier accountAggregator;
+
+  @Column(name = "consent_request")
+  private String consentRequest;
+
   @CreationTimestamp
   @Column(name = "created_at")
   private LocalDateTime createdAt;
@@ -44,6 +51,5 @@ public class Consent {
   @UpdateTimestamp
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
-
 
 }

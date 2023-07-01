@@ -1,4 +1,4 @@
-package com.rupeesense.fi.aa;
+package com.rupeesense.fi.model;
 
 public enum AccountAggregatorIdentifier {
   ONEMONEY
