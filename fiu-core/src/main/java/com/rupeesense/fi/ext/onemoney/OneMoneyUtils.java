@@ -1,6 +1,7 @@
 package com.rupeesense.fi.ext.onemoney;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 import lombok.experimental.UtilityClass;
 
@@ -12,7 +13,7 @@ public class OneMoneyUtils {
   }
 
   public static LocalDateTime getOneMoneyApiTimestamp() {
-    return LocalDateTime.now();
+    return LocalDateTime.now(ZoneId.of("UTC"));
   }
 
   public static String getOneMoneyApiVersion() {

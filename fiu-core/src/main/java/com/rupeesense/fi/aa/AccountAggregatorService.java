@@ -19,15 +19,19 @@ public class AccountAggregatorService {
 
   private final ConsentRepository consentRepository;
 
+  private final OneMoneyRequestGenerator oneMoneyRequestGenerator;
+
   @Autowired
   public AccountAggregatorService(OneMoneyAccountAggregator oneMoneyAccountAggregator,
-      ConsentRepository consentRepository) {
+      ConsentRepository consentRepository, OneMoneyRequestGenerator oneMoneyRequestGenerator) {
     this.oneMoneyAccountAggregator = oneMoneyAccountAggregator;
     this.consentRepository = consentRepository;
+    this.oneMoneyRequestGenerator = oneMoneyRequestGenerator;
   }
 
   public ConsentResponse initiateConsent(ConsentRequest consentRequest) {
-    OneMoneyConsentAPIRequest oneMoneyConsentAPIRequest = OneMoneyRequestGenerator.generatePeriodicConsentRequest("RUP0328", consentRequest.getUserVpa()); //TODO: don't hardcode
+    OneMoneyConsentAPIRequest oneMoneyConsentAPIRequest = oneMoneyRequestGenerator.generatePeriodicConsentRequestForUser(
+        consentRequest.getUserVpa());
     OneMoneyConsentAPIResponse consentAPIResponse = oneMoneyAccountAggregator
         .initiateConsent(oneMoneyConsentAPIRequest);
     Consent consent = new Consent();
