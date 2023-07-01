@@ -27,6 +27,7 @@ public class ConsentNotificationRequest {
   @Getter
   @AllArgsConstructor
   public static class Notifier {
+
     private String type;
     private String id;
   }
@@ -34,7 +35,9 @@ public class ConsentNotificationRequest {
   @Getter
   @AllArgsConstructor
   public static class ConsentStatusNotification {
+
     private String consentId;
+    private String consentHandleId;
     private String consentStatus;
   }
 
