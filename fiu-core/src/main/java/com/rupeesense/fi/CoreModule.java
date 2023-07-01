@@ -23,6 +23,8 @@ public class CoreModule {
 
   @Bean
   public ObjectMapper getObjectMapper() {
-    return new ObjectMapper();
+    ObjectMapper objectMapper =  new ObjectMapper();
+    objectMapper.findAndRegisterModules();
+    return objectMapper;
   }
 }

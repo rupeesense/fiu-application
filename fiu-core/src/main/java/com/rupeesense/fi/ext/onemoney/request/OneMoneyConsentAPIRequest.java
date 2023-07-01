@@ -7,6 +7,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -18,6 +20,8 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
 
   @Getter
   @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class ConsentDetail {
 
     @JsonProperty("consentStart")
@@ -74,6 +78,8 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   }
 
   @Getter
+  @Setter
+  @NoArgsConstructor
   @AllArgsConstructor
   public static class DataConsumer {
 
@@ -82,6 +88,8 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   }
 
   @Getter
+  @Setter
+  @NoArgsConstructor
   @AllArgsConstructor
   public static class Customer {
 
@@ -90,6 +98,9 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   }
 
   @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
   @Builder
   public static class Purpose {
 
@@ -107,6 +118,8 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   }
 
   @Getter
+  @Setter
+  @NoArgsConstructor
   @AllArgsConstructor
   public static class Category {
 
@@ -115,6 +128,8 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   }
 
   @Getter
+  @Setter
+  @NoArgsConstructor
   @AllArgsConstructor
   public static class DataLife {
 
@@ -127,6 +142,8 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
 
   @Builder
   @Getter
+  @Setter
+  @NoArgsConstructor
   @AllArgsConstructor
   public static class Frequency {
 
@@ -138,6 +155,8 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   }
 
   @Getter
+  @Setter
+  @NoArgsConstructor
   @AllArgsConstructor
   public static class DataFilter {
 
