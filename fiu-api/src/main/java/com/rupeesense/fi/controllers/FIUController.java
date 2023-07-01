@@ -27,6 +27,6 @@ public class FIUController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public void receiveConsentNotification(@RequestBody ConsentNotificationRequest consentNotificationRequest) {
-    fiuService.receiveConsentNotification(consentNotificationRequest);
+    fiuService.updateConsentAndHandleFromNotification(consentNotificationRequest);
   }
 }

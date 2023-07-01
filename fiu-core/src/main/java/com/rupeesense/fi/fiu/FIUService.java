@@ -39,7 +39,7 @@ public class FIUService {
     this.objectMapper = objectMapper;
   }
 
-  public void receiveConsentNotification(ConsentNotificationRequest consentNotificationRequest) {
+  public void updateConsentAndHandleFromNotification(ConsentNotificationRequest consentNotificationRequest) {
     ConsentHandle consentHandle = consentHandleRepository.findByConsentHandleIdAndAccountAggregator(
             consentNotificationRequest.getConsentStatusNotification().getConsentHandle(),
             AccountAggregatorIdentifier.ONEMONEY);
