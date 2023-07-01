@@ -3,29 +3,15 @@ package com.rupeesense.fi.ext.onemoney.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 @Builder
 @AllArgsConstructor
-public class OneMoneyConsentAPIRequest {
-
-  @JsonProperty("ver")
-  private String ver;
-
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-  @JsonProperty("timestamp")
-  private LocalDateTime timestamp;
-
-  @JsonProperty("txnid")
-  private String txnid;
+public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
 
   @JsonProperty("ConsentDetail")
   private ConsentDetail consentDetail;
@@ -49,7 +35,7 @@ public class OneMoneyConsentAPIRequest {
     private String fetchType;
 
     @JsonProperty("consentTypes")
-    private List<String> consentTypes;
+    private List<ConsentType> consentTypes;
 
     @JsonProperty("fiTypes")
     private List<FIType> fiTypes;
@@ -79,6 +65,12 @@ public class OneMoneyConsentAPIRequest {
 
   public enum FIType {
     DEPOSIT, TERM_DEPOSIT, RECURRING_DEPOSIT, SIP, CP, GOVT_SECURITIES, EQUITIES, BONDS, DEBENTURES, MUTUAL_FUNDS, ETF, IDR, CIS, AIF, INSURANCE_POLICIES, NPS, INVIT, REIT, OTHER
+  }
+
+  public enum ConsentType {
+    TRANSACTIONS,
+    PROFILE,
+    SUMMARY
   }
 
   @Getter
@@ -124,19 +116,6 @@ public class OneMoneyConsentAPIRequest {
 
   @Getter
   @AllArgsConstructor
-  public static class FIDataRange {
-
-    @JsonProperty("from")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime from;
-
-    @JsonProperty("to")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime to;
-  }
-
-  @Getter
-  @AllArgsConstructor
   public static class DataLife {
 
     @JsonProperty("unit")
@@ -146,6 +125,7 @@ public class OneMoneyConsentAPIRequest {
     private int value;
   }
 
+  @Builder
   @Getter
   @AllArgsConstructor
   public static class Frequency {
@@ -169,42 +149,6 @@ public class OneMoneyConsentAPIRequest {
 
     @JsonProperty("value")
     private String value;
-  }
-
-  //https://api.rebit.co.in/purpose
-  public static final Purpose PURPOSE_102 = Purpose.builder().code("102")
-      .refUri("https://api.rebit.org.in/aa/purpose/102.xml")
-      .text("Customer spending patterns, budget or other reportings")
-      .category(new Category("Purpose Category")) //TODO: REVIEW
-      .build();
-
-
-  public static OneMoneyConsentAPIRequest generatePeriodicConsentRequest(String dataConsumerId,
-      String customerId) {
-
-    ConsentDetail consentDetail = ConsentDetail.builder()
-        .consentStart(LocalDateTime.now())
-        .consentExpiry(LocalDateTime.now().plusYears(1))
-        .consentMode("STORE")
-        .fetchType("PERIODIC")
-        .dataConsumer(new DataConsumer(dataConsumerId))
-        .customer(new Customer(customerId))
-        .consentTypes(Arrays.asList("TRANSACTIONS", "PROFILE", "SUMMARY"))
-        .dataLife(new DataLife("YEAR", 3))
-        .frequency(new Frequency("DATE", 2))
-        .purpose(PURPOSE_102)
-        .dataFilter(Arrays.asList(new DataFilter("TRANSACTIONAMOUNT", ">=", "1")))
-        .fiDataRange(new FIDataRange(LocalDateTime.now(), LocalDateTime.now()))
-        .fiTypes(List.of(FIType.DEPOSIT)) //use all FI types //TODO: verify
-        .build();
-
-    return new OneMoneyConsentAPIRequest("1.1.2",
-        LocalDateTime.now(),
-        generateUUID(), consentDetail);
-  }
-
-  private static String generateUUID() {
-    return UUID.randomUUID().toString();
   }
 
 }

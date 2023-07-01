@@ -1,7 +1,6 @@
 package com.rupeesense.fi.controllers;
 
 import com.rupeesense.fi.api.request.ConsentNotificationRequest;
-import com.rupeesense.fi.api.request.ConsentNotificationRequest.ConsentStatusNotification;
 import com.rupeesense.fi.fiu.FIUService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

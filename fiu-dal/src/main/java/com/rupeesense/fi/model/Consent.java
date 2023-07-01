@@ -1,5 +1,6 @@
 package com.rupeesense.fi.model;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 @Setter
@@ -24,7 +27,7 @@ public class Consent {
   @Column(name = "consent_request_id", nullable = false)
   private String consentRequestId;
 
-  @Column(name = "consent_id", nullable = false)
+  @Column(name = "consent_id")
   private String consentId;
 
   @Column(name = "user_id", nullable = false)
@@ -33,5 +36,14 @@ public class Consent {
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
   private ConsentStatus status;
+
+  @CreationTimestamp
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
+
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  private LocalDateTime updatedAt;
+
 
 }
