@@ -1,7 +1,7 @@
 package com.rupeesense.fi.aa;
 
 import com.rupeesense.fi.api.request.ConsentRequest;
-import com.rupeesense.fi.api.request.OneMoneyRequestGenerator;
+import com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator;
 import com.rupeesense.fi.api.response.ConsentResponse;
 import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;

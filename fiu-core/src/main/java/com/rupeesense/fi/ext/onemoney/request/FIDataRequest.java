@@ -10,17 +10,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class FIDataRequest {
-
-  @JsonProperty("ver")
-  private String ver;
-
-  @JsonProperty("timestamp")
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-  private LocalDateTime timestamp;
-
-  @JsonProperty("txnid")
-  private String txnid;
+public class FIDataRequest extends OneMoneyRequest {
 
   @JsonProperty("FIDataRange")
   private FIDataRange fidataRange;
@@ -74,31 +64,5 @@ public class FIDataRequest {
       @JsonProperty("KeyValue")
       private String keyValue;
     }
-  }
-
-  public static FIDataRequest createHourlyFIDataRequestForConsent(String consentId) {
-    return new FIDataRequest(
-        OneMoneyUtils.getOneMoneyApiVersion(),
-        OneMoneyUtils.getOneMoneyApiTimestamp(),
-        OneMoneyUtils.generateUUID(),
-        new FIDataRange(
-            LocalDateTime.now().minusHours(1), //TODO: revisit
-            LocalDateTime.now()
-        ),
-        new Consent(
-            consentId,
-            "digitalSignature"
-        ),
-        new KeyMaterial(
-            "cryptoAlg",
-            "curve",
-            "params",
-            new KeyMaterial.DHPublicKey(
-                "expiry",
-                "parameters",
-                "keyValue"
-            ),
-            "nonce"
-        ));
   }
 }
