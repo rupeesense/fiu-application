@@ -1,6 +1,9 @@
-package com.rupeesense.fi.api.request;
+package com.rupeesense.fi.ext.onemoney;
 
 import com.rupeesense.fi.FIUServiceConfig;
+import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
+import com.rupeesense.fi.ext.onemoney.request.FIDataRequest.Consent;
+import com.rupeesense.fi.ext.onemoney.request.FIDataRequest.KeyMaterial;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Category;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentDetail;
@@ -80,6 +83,29 @@ public class OneMoneyRequestGenerator {
         .build();
 
     return new OneMoneyConsentAPIRequest(consentDetail);
+  }
+
+  public static FIDataRequest createHourlyFIDataRequestForConsent(String consentId) {
+    return new FIDataRequest(
+        new FIDataRange(
+            LocalDateTime.now().minusHours(1), //TODO: revisit
+            LocalDateTime.now()
+        ),
+        new Consent(
+            consentId,
+            "digitalSignature"
+        ),
+        new KeyMaterial(
+            "cryptoAlg",
+            "curve",
+            "params",
+            new KeyMaterial.DHPublicKey(
+                "expiry",
+                "parameters",
+                "keyValue"
+            ),
+            "nonce"
+        ));
   }
 
 }

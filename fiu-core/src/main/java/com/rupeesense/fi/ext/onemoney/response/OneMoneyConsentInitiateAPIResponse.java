@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-public class OneMoneyConsentAPIResponse {
+public class OneMoneyConsentInitiateAPIResponse {
 
   @JsonProperty("ver")
   private String ver;

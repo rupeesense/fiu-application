@@ -1,6 +1,7 @@
 package com.rupeesense.fi.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rupeesense.fi.model.ConsentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,6 +28,7 @@ public class ConsentNotificationRequest {
   @Getter
   @AllArgsConstructor
   public static class Notifier {
+
     private String type;
     private String id;
   }
@@ -34,8 +36,10 @@ public class ConsentNotificationRequest {
   @Getter
   @AllArgsConstructor
   public static class ConsentStatusNotification {
+
     private String consentId;
-    private String consentStatus;
+    private String consentHandle;
+    private ConsentStatus consentStatus;
   }
 
 }

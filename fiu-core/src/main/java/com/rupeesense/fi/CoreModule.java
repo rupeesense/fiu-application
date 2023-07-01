@@ -1,5 +1,6 @@
 package com.rupeesense.fi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,5 +19,12 @@ public class CoreModule {
         .defaultHeader("Content-Type", "application/json")
         .defaultHeader("client_api_key", System.getenv("CLIENT_API_KEY"))
         .build();
+  }
+
+  @Bean
+  public ObjectMapper getObjectMapper() {
+    ObjectMapper objectMapper =  new ObjectMapper();
+    objectMapper.findAndRegisterModules();
+    return objectMapper;
   }
 }

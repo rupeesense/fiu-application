@@ -5,7 +5,8 @@ import static com.rupeesense.fi.CoreModule.ONE_MONEY_CLIENT_NAME;
 import com.rupeesense.fi.aa.exception.AAClientException;
 import com.rupeesense.fi.aa.exception.AAServerException;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
-import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentAPIResponse;
+import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentArtifactAPIResponse;
+import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentInitiateAPIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.http.HttpStatus;
@@ -24,13 +25,22 @@ public class OneMoneyAccountAggregator {
     this.webClient = webClient;
   }
 
-  public OneMoneyConsentAPIResponse initiateConsent(OneMoneyConsentAPIRequest request) {
+  public OneMoneyConsentInitiateAPIResponse initiateConsent(OneMoneyConsentAPIRequest request) {
     return webClient.post()
         .uri("/aa/Consent")
         .bodyValue(request)
         .retrieve()
         .onStatus(HttpStatus::isError, this::createException)
-        .bodyToMono(OneMoneyConsentAPIResponse.class)
+        .bodyToMono(OneMoneyConsentInitiateAPIResponse.class)
+        .block();
+  }
+
+  public OneMoneyConsentArtifactAPIResponse getConsentArtifact(String consentId) {
+    return webClient.get()
+        .uri("/aa/Consent/{consentId}", consentId)
+        .retrieve()
+        .onStatus(HttpStatus::isError, this::createException)
+        .bodyToMono(OneMoneyConsentArtifactAPIResponse.class)
         .block();
   }
 
