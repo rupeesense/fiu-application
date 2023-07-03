@@ -37,7 +37,7 @@ public class Consent {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "account_aggregator", nullable = false)
-  private AccountAggregatorIdentifier accountAggregator;
+  private AAIdentifier accountAggregator;
 
   @Lob
   @Column(name = "consent_request")

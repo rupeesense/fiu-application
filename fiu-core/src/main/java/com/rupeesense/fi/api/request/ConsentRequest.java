@@ -1,7 +1,7 @@
 package com.rupeesense.fi.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rupeesense.fi.model.AccountAggregatorIdentifier;
+import com.rupeesense.fi.model.AAIdentifier;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +16,6 @@ public class ConsentRequest {
     @JsonProperty("userVpa")
     private String userVpa;
 
-    private AccountAggregatorIdentifier accountAggId = AccountAggregatorIdentifier.ONEMONEY;
+    private AAIdentifier accountAggId = AAIdentifier.ONEMONEY;
 
 }
