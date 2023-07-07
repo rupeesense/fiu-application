@@ -2,7 +2,6 @@ package com.rupeesense.fi.ext.onemoney;
 
 import com.rupeesense.fi.FIUServiceConfig;
 import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
-import com.rupeesense.fi.ext.onemoney.request.FIDataRequest.KeyMaterial;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Category;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentDetail;

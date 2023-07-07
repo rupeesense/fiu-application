@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller to act as an FIU
  */
 @RestController
-@RequestMapping("/v1/fiu")
+@RequestMapping
 public class FIUController {
 
   private final FIUService fiuService;
@@ -23,7 +23,7 @@ public class FIUController {
     this.fiuService = fiuService;
   }
 
-  @PostMapping(path = "/notification/consent",
+  @PostMapping(path = "/aa/Consent/Notification",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public void receiveConsentNotification(@RequestBody ConsentNotificationRequest consentNotificationRequest) {

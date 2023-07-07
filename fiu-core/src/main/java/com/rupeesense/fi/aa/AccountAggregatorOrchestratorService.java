@@ -77,7 +77,6 @@ public class AccountAggregatorOrchestratorService {
     session.setConsent(consent);
     session.setUserId(userId);
     repositoryFacade.save(session);
-    //TODO: save the session
     return session;
 
   }
