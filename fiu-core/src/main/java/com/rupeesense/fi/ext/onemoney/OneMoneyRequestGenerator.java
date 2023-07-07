@@ -101,27 +101,4 @@ public class OneMoneyRequestGenerator {
     return new OneMoneyConsentAPIRequest(consentDetail);
   }
 
-  public static FIDataRequest createHourlyFIDataRequestForConsent(String consentId) {
-    return new FIDataRequest(
-        new FIDataRange(
-            LocalDateTime.now().minusHours(1), //TODO: revisit
-            LocalDateTime.now()
-        ),
-        new Consent(
-            consentId,
-            "digitalSignature"
-        ),
-        new KeyMaterial(
-            "cryptoAlg",
-            "curve",
-            "params",
-            new KeyMaterial.DHPublicKey(
-                "expiry",
-                "parameters",
-                "keyValue"
-            ),
-            "nonce"
-        ));
-  }
-
 }
