@@ -1,7 +1,9 @@
 package com.rupeesense.fi.aa;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rupeesense.fi.aa.exception.AAClientException;
 import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
 import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentArtifactAPIResponse;
@@ -15,10 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OneMoneyAccountAggregatorTest {
 

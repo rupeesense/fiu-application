@@ -1,6 +1,14 @@
 package com.rupeesense.fi.aa;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rupeesense.fi.api.request.ConsentRequest;
 import com.rupeesense.fi.api.response.ConsentResponse;
 import com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator;
@@ -12,20 +20,14 @@ import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentInitiateAPIRespons
 import com.rupeesense.fi.ext.onemoney.response.OneMoneyRequestDataAPIResponse;
 import com.rupeesense.fi.model.AAIdentifier;
 import com.rupeesense.fi.model.Consent;
-import com.rupeesense.fi.model.ConsentHandle;
 import com.rupeesense.fi.model.ConsentHandleStatus;
 import com.rupeesense.fi.model.Session;
 import com.rupeesense.fi.model.SessionStatus;
 import com.rupeesense.fi.repo.RepositoryFacade;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 public class AccountAggregatorOrchestratorServiceTest {
 
