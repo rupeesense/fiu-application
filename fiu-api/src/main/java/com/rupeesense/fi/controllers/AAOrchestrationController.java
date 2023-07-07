@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(ACCOUNT_AGGREGATOR_BASE_PATH)
 public class AAOrchestrationController {
 
-    private AccountAggregatorOrchestratorService accountAggregatorOrchestratorService;
+    private final AccountAggregatorOrchestratorService accountAggregatorOrchestratorService;
 
     @Autowired
     public AAOrchestrationController(AccountAggregatorOrchestratorService accountAggregatorOrchestratorService) {
