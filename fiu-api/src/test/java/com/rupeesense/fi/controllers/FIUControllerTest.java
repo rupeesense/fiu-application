@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rupeesense.fi.APIConstants;
 import com.rupeesense.fi.api.request.ConsentNotificationRequest;
 import com.rupeesense.fi.fiu.FIUService;
 import com.rupeesense.fi.model.ConsentStatus;
@@ -62,7 +63,7 @@ public class FIUControllerTest {
         ConsentStatus.ACTIVE);
     dummyRequest.setConsentStatusNotification(consentStatusNotification);
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/aa/Consent/Notification")
+    mockMvc.perform(MockMvcRequestBuilders.post(APIConstants.AA_CONSENT_NOTIFICATION)
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(dummyRequest)))
         .andExpect(status().isOk());

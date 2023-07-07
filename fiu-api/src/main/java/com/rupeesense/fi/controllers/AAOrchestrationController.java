@@ -1,8 +1,8 @@
 package com.rupeesense.fi.controllers;
 
-import static com.rupeesense.fi.controllers.APIConstants.ACCOUNT_AGGREGATOR_BASE_PATH;
-import static com.rupeesense.fi.controllers.APIConstants.PLACE_DATA_REQUEST_PATH;
-import static com.rupeesense.fi.controllers.APIConstants.RAISE_PERIODIC_CONSENT_PATH;
+import static com.rupeesense.fi.APIConstants.ACCOUNT_AGGREGATOR_BASE_PATH;
+import static com.rupeesense.fi.APIConstants.PLACE_DATA_REQUEST_PATH;
+import static com.rupeesense.fi.APIConstants.RAISE_PERIODIC_CONSENT_PATH;
 
 import com.rupeesense.fi.aa.AccountAggregatorOrchestratorService;
 import com.rupeesense.fi.api.request.ConsentRequest;

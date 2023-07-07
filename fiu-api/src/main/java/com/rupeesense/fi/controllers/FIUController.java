@@ -1,5 +1,7 @@
 package com.rupeesense.fi.controllers;
 
+import static com.rupeesense.fi.APIConstants.AA_CONSENT_NOTIFICATION;
+
 import com.rupeesense.fi.api.request.ConsentNotificationRequest;
 import com.rupeesense.fi.fiu.FIUService;
 import javax.validation.Valid;
@@ -24,7 +26,7 @@ public class FIUController {
     this.fiuService = fiuService;
   }
 
-  @PostMapping(path = "/aa/Consent/Notification",
+  @PostMapping(path = AA_CONSENT_NOTIFICATION,
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public void receiveConsentNotification(@RequestBody @Valid ConsentNotificationRequest consentNotificationRequest) {

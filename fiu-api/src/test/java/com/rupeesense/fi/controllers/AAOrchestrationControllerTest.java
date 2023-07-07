@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rupeesense.fi.APIConstants;
 import com.rupeesense.fi.aa.AccountAggregatorOrchestratorService;
 import com.rupeesense.fi.api.request.ConsentRequest;
 import com.rupeesense.fi.api.response.ConsentResponse;
