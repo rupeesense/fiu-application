@@ -2,7 +2,6 @@ package com.rupeesense.fi.ext.onemoney;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rupeesense.fi.ext.onemoney.request.FIDataRequest.KeyMaterial;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class KeyMaterialGenerator {
 
