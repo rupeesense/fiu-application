@@ -1,6 +1,7 @@
 package com.rupeesense.fi.ext.onemoney.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,15 +27,5 @@ public class OneMoneyConsentInitiateAPIResponse {
 
   @JsonProperty("ConsentHandle")
   private String handle;
-
-  @NoArgsConstructor
-  @Setter
-  @Getter
-  @AllArgsConstructor
-  public static class Customer {
-
-    @JsonProperty("id")
-    private String id;
-  }
 
 }

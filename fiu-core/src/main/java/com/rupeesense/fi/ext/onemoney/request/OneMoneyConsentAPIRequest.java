@@ -93,16 +93,6 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   @Setter
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class Customer {
-
-    @JsonProperty("id")
-    private String id;
-  }
-
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
   @Builder
   public static class Purpose {
 

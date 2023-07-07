@@ -44,4 +44,14 @@ public class OneMoneyRequest {
     private LocalDateTime to;
   }
 
+  @NoArgsConstructor
+  @Setter
+  @Getter
+  @AllArgsConstructor
+  public static class Customer {
+
+    @JsonProperty("id")
+    private String id;
+  }
+
 }
