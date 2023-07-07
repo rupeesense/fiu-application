@@ -1,7 +1,6 @@
 package com.rupeesense.fi.ext.onemoney.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,21 +10,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
-public class OneMoneyConsentInitiateAPIResponse {
+public class OneMoneyRequestDataAPIResponse {
 
   @JsonProperty("ver")
-  private String ver;
+  private String version;
 
   @JsonProperty("timestamp")
   private String timestamp;
 
   @JsonProperty("txnid")
-  private String txnid;
+  private String transactionId;
 
-  @JsonProperty("Customer")
-  private Customer customer;
+  @JsonProperty("consentId")
+  private String consentId;
 
-  @JsonProperty("ConsentHandle")
-  private String handle;
+  @JsonProperty("sessionId")
+  private String sessionId;
 
 }

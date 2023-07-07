@@ -1,13 +1,16 @@
 package com.rupeesense.fi.ext.onemoney.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rupeesense.fi.ext.onemoney.OneMoneyUtils;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.FIDataRange;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+//TODO: Try to reduce the lombok annotations, looks too much
+@Setter
+@NoArgsConstructor
+@Builder
 @Getter
 @AllArgsConstructor
 public class FIDataRequest extends OneMoneyRequest {
@@ -21,6 +24,8 @@ public class FIDataRequest extends OneMoneyRequest {
   @JsonProperty("KeyMaterial")
   private KeyMaterial keyMaterial;
 
+  @Setter
+  @NoArgsConstructor
   @Getter
   @AllArgsConstructor
   public static class Consent {
@@ -32,6 +37,9 @@ public class FIDataRequest extends OneMoneyRequest {
     private String digitalSignature;
   }
 
+  @Setter
+  @NoArgsConstructor
+  @Builder
   @Getter
   @AllArgsConstructor
   public static class KeyMaterial {
@@ -51,6 +59,8 @@ public class FIDataRequest extends OneMoneyRequest {
     @JsonProperty("Nonce")
     private String nonce;
 
+    @Setter
+    @NoArgsConstructor
     @Getter
     @AllArgsConstructor
     public static class DHPublicKey {

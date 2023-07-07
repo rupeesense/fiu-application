@@ -1,8 +1,7 @@
 package com.rupeesense.fi.api.response;
 
-import com.rupeesense.fi.model.AccountAggregatorIdentifier;
+import com.rupeesense.fi.model.AAIdentifier;
 import com.rupeesense.fi.model.ConsentHandleStatus;
-import com.rupeesense.fi.model.ConsentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ public class ConsentResponse {
 
     private String userVpa;
 
-    private AccountAggregatorIdentifier accountAggId;
+    private AAIdentifier accountAggId;
 
     private String requestId;
 

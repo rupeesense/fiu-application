@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Builder
 @AllArgsConstructor
@@ -82,16 +83,6 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class DataConsumer {
-
-    @JsonProperty("id")
-    private String id;
-  }
-
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class Customer {
 
     @JsonProperty("id")
     private String id;

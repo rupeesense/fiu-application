@@ -2,22 +2,22 @@ package com.rupeesense.fi.ext.onemoney;
 
 import com.rupeesense.fi.FIUServiceConfig;
 import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
-import com.rupeesense.fi.ext.onemoney.request.FIDataRequest.Consent;
-import com.rupeesense.fi.ext.onemoney.request.FIDataRequest.KeyMaterial;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Category;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentDetail;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentType;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Customer;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.DataConsumer;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.DataFilter;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.DataLife;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.FIType;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Frequency;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.Purpose;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.FIDataRange;
+import com.rupeesense.fi.model.Consent;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +59,22 @@ public class OneMoneyRequestGenerator {
     this.fiuServiceConfig = fiuServiceConfig;
   }
 
+  public FIDataRequest generateDataRequest(Consent consent) {
+    FIDataRequest.Consent requestConsent = new FIDataRequest.Consent(
+        consent.getConsentId(),
+        consent.getDigitalSignature()
+    );
+    FIDataRange fiDataRange = new FIDataRange(
+        LocalDateTime.now(ZoneId.of("UTC")).minusHours(1),
+        LocalDateTime.now(ZoneId.of("UTC")).minusMinutes(15)
+    );
+    return FIDataRequest.builder()
+        .fidataRange(fiDataRange)
+        .consent(requestConsent)
+        .keyMaterial(KeyMaterialGenerator.generate())
+        .build();
+  }
+
   public OneMoneyConsentAPIRequest generatePeriodicConsentRequestForUser(String customerId) {
 
     LocalDateTime currentTime = LocalDateTime.now();
@@ -75,7 +91,7 @@ public class OneMoneyRequestGenerator {
         .frequency(FREQUENCY_TWICE_IN_AN_HOUR)
         .purpose(PURPOSE_102)
         .fiDataRange(FIDataRange.builder()
-            .from(currentTime)
+            .from(currentTime.minus(CONSENT_EXPIRY_DURATION))
             .to(currentTime.plus(CONSENT_EXPIRY_DURATION))
             .build())
         .dataFilter(List.of(DATA_FILTER_TRANSACTION_AMOUNT_GREATER_THAN_1))
@@ -83,29 +99,6 @@ public class OneMoneyRequestGenerator {
         .build();
 
     return new OneMoneyConsentAPIRequest(consentDetail);
-  }
-
-  public static FIDataRequest createHourlyFIDataRequestForConsent(String consentId) {
-    return new FIDataRequest(
-        new FIDataRange(
-            LocalDateTime.now().minusHours(1), //TODO: revisit
-            LocalDateTime.now()
-        ),
-        new Consent(
-            consentId,
-            "digitalSignature"
-        ),
-        new KeyMaterial(
-            "cryptoAlg",
-            "curve",
-            "params",
-            new KeyMaterial.DHPublicKey(
-                "expiry",
-                "parameters",
-                "keyValue"
-            ),
-            "nonce"
-        ));
   }
 
 }
