@@ -2,6 +2,7 @@ package com.rupeesense.fi.controllers;
 
 import com.rupeesense.fi.api.request.ConsentNotificationRequest;
 import com.rupeesense.fi.fiu.FIUService;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ public class FIUController {
   @PostMapping(path = "/aa/Consent/Notification",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public void receiveConsentNotification(@RequestBody ConsentNotificationRequest consentNotificationRequest) {
+  public void receiveConsentNotification(@RequestBody @Valid ConsentNotificationRequest consentNotificationRequest) {
     fiuService.updateConsentAndHandleFromNotification(consentNotificationRequest);
   }
 }

@@ -16,10 +16,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,19 +49,48 @@ public class AAOrchestrationControllerTest {
 
   @Test
   public void testInitiatePeriodicConsentRequest() throws Exception {
-    ConsentRequest consentRequest = new ConsentRequest();
+    ConsentRequest consentRequest = new ConsentRequest("test@onemoney", AAIdentifier.ONEMONEY);
     ConsentResponse consentResponse = new ConsentResponse("test@onemoney",
         AAIdentifier.ONEMONEY, "requestId", ConsentHandleStatus.PENDING);
 
-    when(accountAggregatorOrchestratorService.initiateConsent(eq(consentRequest))).thenReturn(consentResponse);
+    when(accountAggregatorOrchestratorService.initiateConsent(any(ConsentRequest.class)))
+        .thenReturn(consentResponse);
 
-    mockMvc.perform(post("/v1/account_aggregator/consent/periodic")
+    mockMvc.perform(post(APIConstants.ACCOUNT_AGGREGATOR_BASE_PATH + APIConstants.RAISE_PERIODIC_CONSENT_PATH)
             .content(asJsonString(consentRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().json(asJsonString(consentResponse)));
   }
+
+  @Test
+  public void testInitiatePeriodicConsentRequestWithInvalidRequest() throws Exception {
+    ConsentRequest consentRequest = new ConsentRequest();
+    ConsentResponse consentResponse = new ConsentResponse("test@onemoney",
+        AAIdentifier.ONEMONEY, "requestId", ConsentHandleStatus.PENDING);
+
+    when(accountAggregatorOrchestratorService.initiateConsent(any(ConsentRequest.class)))
+        .thenReturn(consentResponse);
+
+    mockMvc.perform(post(APIConstants.ACCOUNT_AGGREGATOR_BASE_PATH + APIConstants.RAISE_PERIODIC_CONSENT_PATH)
+            .content(asJsonString(consentRequest))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testPlaceDataRequestForUser_Success() throws Exception {
+    String userId = "123";
+
+    mockMvc.perform(MockMvcRequestBuilders.post(APIConstants.ACCOUNT_AGGREGATOR_BASE_PATH + APIConstants.PLACE_DATA_REQUEST_PATH, userId)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+
+    verify(accountAggregatorOrchestratorService).placeDataRequest(userId);
+  }
+
 
   public static String asJsonString(final Object obj) {
     try {
