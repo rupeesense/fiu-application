@@ -1,8 +1,11 @@
 package com.rupeesense.fi.controllers;
 
 import static com.rupeesense.fi.APIConstants.AA_CONSENT_NOTIFICATION;
+import static com.rupeesense.fi.APIConstants.FIU_CONSENT_CREATE;
 
 import com.rupeesense.fi.api.request.ConsentNotificationRequest;
+import com.rupeesense.fi.api.request.ConsentRequest;
+import com.rupeesense.fi.api.response.ConsentResponse;
 import com.rupeesense.fi.fiu.FIUService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +29,17 @@ public class FIUController {
     this.fiuService = fiuService;
   }
 
+  @PostMapping(path = FIU_CONSENT_CREATE,
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+    public ConsentResponse createConsent(@RequestBody @Valid ConsentRequest consentRequest) {
+      return fiuService.createConsent(consentRequest);
+    }
+
   @PostMapping(path = AA_CONSENT_NOTIFICATION,
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public void receiveConsentNotification(@RequestBody @Valid ConsentNotificationRequest consentNotificationRequest) {
-    fiuService.updateConsentAndHandleFromNotification(consentNotificationRequest);
+    //fiuService.updateConsentAndHandleFromNotification(consentNotificationRequest);
   }
 }

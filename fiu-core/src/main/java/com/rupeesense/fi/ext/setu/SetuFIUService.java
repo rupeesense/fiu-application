@@ -1,14 +1,14 @@
-package com.rupeesense.fi.aa;
+package com.rupeesense.fi.ext.setu;
 
 import static com.rupeesense.fi.CoreModule.ONE_MONEY_CLIENT_NAME;
+import static com.rupeesense.fi.CoreModule.SETU_CLIENT_NAME;
 
 import com.rupeesense.fi.aa.exception.AAClientException;
 import com.rupeesense.fi.aa.exception.AAServerException;
-import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
-import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentArtifactAPIResponse;
 import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentInitiateAPIResponse;
-import com.rupeesense.fi.ext.onemoney.response.OneMoneyRequestDataAPIResponse;
+import com.rupeesense.fi.ext.setu.request.SetuConsentAPIRequest;
+import com.rupeesense.fi.ext.setu.response.SetuConsentInitiateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.http.HttpStatus;
@@ -18,41 +18,23 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-public class OneMoneyAccountAggregator {
+public class SetuFIUService {
+
 
   private final WebClient webClient;
 
   @Autowired
-  public OneMoneyAccountAggregator(@Name(ONE_MONEY_CLIENT_NAME) WebClient webClient) {
+  public SetuFIUService(@Name(SETU_CLIENT_NAME) WebClient webClient) {
     this.webClient = webClient;
   }
 
-  public OneMoneyConsentInitiateAPIResponse initiateConsent(OneMoneyConsentAPIRequest request) {
+  public SetuConsentInitiateResponse initiateConsent(SetuConsentAPIRequest request) {
     return webClient.post()
-        .uri("/aa/Consent")
+        .uri("/consents")
         .bodyValue(request)
         .retrieve()
         .onStatus(HttpStatus::isError, this::createException)
-        .bodyToMono(OneMoneyConsentInitiateAPIResponse.class)
-        .block();
-  }
-
-  public OneMoneyConsentArtifactAPIResponse getConsentArtifact(String consentId) {
-    return webClient.get()
-        .uri("/aa/Consent/{consentId}", consentId)
-        .retrieve()
-        .onStatus(HttpStatus::isError, this::createException)
-        .bodyToMono(OneMoneyConsentArtifactAPIResponse.class)
-        .block();
-  }
-
-  public OneMoneyRequestDataAPIResponse placeDataRequest(FIDataRequest dataRequest) {
-    return webClient.post()
-        .uri("/aa/FI/request")
-        .bodyValue(dataRequest)
-        .retrieve()
-        .onStatus(HttpStatus::isError, this::createException)
-        .bodyToMono(OneMoneyRequestDataAPIResponse.class)
+        .bodyToMono(SetuConsentInitiateResponse.class)
         .block();
   }
 
@@ -69,4 +51,5 @@ public class OneMoneyAccountAggregator {
           }
         });
   }
+
 }

@@ -1,4 +1,4 @@
-package com.rupeesense.fi.ext.onemoney.request;
+package com.rupeesense.fi.ext;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.rupeesense.fi.FIUServiceConfig;
 import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
-import com.rupeesense.fi.ext.onemoney.request.ConsentDetail;
+import com.rupeesense.fi.ext.ConsentDetail;
 import com.rupeesense.fi.model.Consent;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

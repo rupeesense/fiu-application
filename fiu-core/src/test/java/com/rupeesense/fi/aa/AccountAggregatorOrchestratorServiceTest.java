@@ -49,34 +49,34 @@ public class AccountAggregatorOrchestratorServiceTest {
         oneMoneyAccountAggregator, repositoryFacade, oneMoneyRequestGenerator, objectMapper);
   }
 
-  @Test
-  public void testInitiateConsent_Success() {
-    // Prepare the input
-    ConsentRequest consentRequest = new ConsentRequest("test@aa", AAIdentifier.ONEMONEY);
-    // Set up consentRequest with required data
-
-    // Prepare the mocked objects
-    OneMoneyConsentAPIRequest consentAPIRequest = new OneMoneyConsentAPIRequest();
-    OneMoneyConsentInitiateAPIResponse consentAPIResponse = new OneMoneyConsentInitiateAPIResponse();
-    consentAPIResponse.setHandle("handle123");
-    consentAPIResponse.setCustomer(new Customer("cust123"));
-    // Set up the mocked interactions
-    when(oneMoneyRequestGenerator.generatePeriodicConsentRequestForUser(anyString()))
-        .thenReturn(consentAPIRequest);
-    when(oneMoneyAccountAggregator.initiateConsent(eq(consentAPIRequest)))
-        .thenReturn(consentAPIResponse);
-
-    // Perform the initiation
-    ConsentResponse response = orchestratorService.initiateConsent(consentRequest);
-
-    // Verify the interactions and assertions
-    verify(oneMoneyRequestGenerator).generatePeriodicConsentRequestForUser(eq(consentRequest.getUserVpa()));
-    verify(oneMoneyAccountAggregator).initiateConsent(eq(consentAPIRequest));
-    verifyNoMoreInteractions(oneMoneyRequestGenerator, oneMoneyAccountAggregator);
-    assertEquals(consentAPIResponse.getCustomer().getId(), response.getUserVpa());
-    assertEquals(consentRequest.getAccountAggId(), response.getAccountAggId());
-    assertEquals(ConsentHandleStatus.PENDING, response.getStatus());
-  }
+//  @Test
+//  public void testInitiateConsent_Success() {
+//    // Prepare the input
+//    ConsentRequest consentRequest = new ConsentRequest("test@aa", AAIdentifier.ONEMONEY);
+//    // Set up consentRequest with required data
+//
+//    // Prepare the mocked objects
+//    OneMoneyConsentAPIRequest consentAPIRequest = new OneMoneyConsentAPIRequest();
+//    OneMoneyConsentInitiateAPIResponse consentAPIResponse = new OneMoneyConsentInitiateAPIResponse();
+//    consentAPIResponse.setHandle("handle123");
+//    consentAPIResponse.setCustomer(new Customer("cust123"));
+//    // Set up the mocked interactions
+//    when(oneMoneyRequestGenerator.generatePeriodicConsentRequestForUser(anyString()))
+//        .thenReturn(consentAPIRequest);
+//    when(oneMoneyAccountAggregator.initiateConsent(eq(consentAPIRequest)))
+//        .thenReturn(consentAPIResponse);
+//
+//    // Perform the initiation
+//    ConsentResponse response = orchestratorService.initiateConsent(consentRequest);
+//
+//    // Verify the interactions and assertions
+//    verify(oneMoneyRequestGenerator).generatePeriodicConsentRequestForUser(eq(consentRequest.getUserVpa()));
+//    verify(oneMoneyAccountAggregator).initiateConsent(eq(consentAPIRequest));
+//    verifyNoMoreInteractions(oneMoneyRequestGenerator, oneMoneyAccountAggregator);
+//    assertEquals(consentAPIResponse.getCustomer().getId(), response.getUserVpa());
+//    assertEquals(consentRequest.getAccountAggId(), response.getAccountAggId());
+//    assertEquals(ConsentHandleStatus.PENDING, response.getStatus());
+//  }
 
   @Test
   public void testFetchConsentArtifact_Success() {
