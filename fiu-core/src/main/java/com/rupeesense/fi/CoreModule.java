@@ -10,6 +10,8 @@ public class CoreModule {
 
   public static final String ONE_MONEY_CLIENT_NAME = "one-money-web-client";
 
+  public static final String SETU_CLIENT_NAME = "setu-web-client";
+
   //TODO: make this config driven
   @Bean(name = ONE_MONEY_CLIENT_NAME)
   public WebClient getOneMoneyWebClient() {

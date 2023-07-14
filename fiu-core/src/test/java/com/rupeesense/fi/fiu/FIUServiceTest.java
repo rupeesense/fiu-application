@@ -11,7 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rupeesense.fi.aa.AccountAggregatorOrchestratorService;
 import com.rupeesense.fi.api.request.ConsentNotificationRequest;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentDetail;
+import com.rupeesense.fi.ext.onemoney.request.ConsentDetail;
 import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentArtifactAPIResponse;
 import com.rupeesense.fi.model.AAIdentifier;
 import com.rupeesense.fi.model.Consent;
