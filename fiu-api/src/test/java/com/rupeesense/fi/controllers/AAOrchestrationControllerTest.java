@@ -17,6 +17,8 @@ import com.rupeesense.fi.model.ConsentHandleStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,23 +30,19 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
 public class AAOrchestrationControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
 
-  @MockBean
+  @Mock
   private AccountAggregatorOrchestratorService accountAggregatorOrchestratorService;
-
-  @Autowired
-  private WebApplicationContext webApplicationContext;
 
   @BeforeEach
   public void setup() {
-    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    MockitoAnnotations.openMocks(this);
+    AAOrchestrationController controller = new AAOrchestrationController(accountAggregatorOrchestratorService);
+    mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
   }
 
   @Test
