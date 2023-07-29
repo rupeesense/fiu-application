@@ -5,6 +5,7 @@ import static com.rupeesense.fi.model.ConsentStatus.ACTIVE;
 import static com.rupeesense.fi.model.ConsentStatus.PAUSED;
 import static com.rupeesense.fi.model.ConsentStatus.REVOKED;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rupeesense.fi.api.request.ConsentNotificationRequest;
 import com.rupeesense.fi.api.request.ConsentRequest;
@@ -45,6 +46,11 @@ public class FIUService {
 
   public ConsentResponse createConsent(ConsentRequest consentRequest) {
     SetuConsentAPIRequest consentAPIRequest = setuRequestGenerator.generateConsentRequest(consentRequest.getUserVpa());
+    try {
+      System.out.println(objectMapper.writeValueAsString(consentAPIRequest));
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
     SetuConsentInitiateResponse consentAPIResponse = setuFIUService.initiateConsent(consentAPIRequest);
     Consent consent = new Consent();
     consent.setConsentId(consentAPIResponse.getId());
@@ -55,6 +61,10 @@ public class FIUService {
     repositoryFacade.save(consent);
     return new ConsentResponse(consent.getUserId(), consent.getAccountAggregator(),
         consent.getConsentId(), consent.getStatus());
+  }
+
+  public void getData(String sessionId) {
+
   }
 
 //  public void updateConsentAndHandleFromNotification(ConsentNotificationRequest consentNotificationRequest) {

@@ -48,7 +48,8 @@ public class OneMoneyRequestGenerator {
 
   public static final List<ConsentType> ALL_CONSENT_TYPES = List.of(ConsentDetail.ConsentType.values());
 
-  public static final List<FIType> SUPPORTED_FI_TYPES = List.of(ConsentDetail.FIType.values());
+  //TODO: might need to comeback in future and change this
+  public static final List<FIType> SUPPORTED_FI_TYPES = List.of(FIType.DEPOSIT);
 
   public static final TemporalAmount CONSENT_EXPIRY_DURATION = Duration.ofDays(365);
 
