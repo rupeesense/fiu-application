@@ -1,6 +1,8 @@
 package com.rupeesense.fi.api.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rupeesense.fi.ext.ConsentDetail;
 import com.rupeesense.fi.model.ConsentStatus;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -14,54 +16,34 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsentNotificationRequest {
-
-  @NotBlank
-  @JsonProperty("ver")
-  private String ver;
 
   @NotBlank
   @JsonProperty("timestamp")
   private String timestamp;
 
   @NotBlank
-  @JsonProperty("txnid")
-  private String txnid;
+  @JsonProperty("consentId")
+  private String consentId;
 
-  @Valid
-  @JsonProperty("Notifier")
-  private Notifier notifier;
+  @NotNull
+  @JsonProperty("data")
+  private EventData data;
 
-  @Valid
-  @JsonProperty("ConsentStatusNotification")
-  private ConsentStatusNotification consentStatusNotification;
 
-  @NoArgsConstructor
   @Setter
   @Getter
-  @AllArgsConstructor
-  public static class Notifier {
-
-    @NotBlank
-    private String type;
-
-    @NotBlank
-    private String id;
-  }
-
   @NoArgsConstructor
-  @Setter
-  @Getter
   @AllArgsConstructor
-  public static class ConsentStatusNotification {
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  public static class EventData {
 
-    @NotBlank
-    private String consentId;
-
-    @NotBlank
-    private String consentHandle;
+//    @JsonProperty("Detail")
+//    public ConsentDetail consentDetail;
 
     @NotNull
+    @JsonProperty("status")
     private ConsentStatus consentStatus;
   }
 

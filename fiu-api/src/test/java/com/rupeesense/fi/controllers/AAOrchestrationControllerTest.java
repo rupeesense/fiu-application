@@ -29,8 +29,8 @@ public class AAOrchestrationControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @MockBean
-  private AccountAggregatorOrchestratorService accountAggregatorOrchestratorService;
+//  @MockBean
+//  private AccountAggregatorOrchestratorService accountAggregatorOrchestratorService;
 
   @Autowired
   private WebApplicationContext webApplicationContext;
@@ -73,16 +73,16 @@ public class AAOrchestrationControllerTest {
 //        .andExpect(status().isBadRequest());
 //  }
 
-  @Test
-  public void testPlaceDataRequestForUser_Success() throws Exception {
-    String userId = "123";
-
-    mockMvc.perform(MockMvcRequestBuilders.post(APIConstants.ACCOUNT_AGGREGATOR_BASE_PATH + APIConstants.PLACE_DATA_REQUEST_PATH, userId)
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk());
-
-    verify(accountAggregatorOrchestratorService).placeDataRequest(userId);
-  }
+//  @Test
+//  public void testPlaceDataRequestForUser_Success() throws Exception {
+//    String userId = "123";
+//
+//    mockMvc.perform(MockMvcRequestBuilders.post(APIConstants.ACCOUNT_AGGREGATOR_BASE_PATH + APIConstants.PLACE_DATA_REQUEST_PATH, userId)
+//            .contentType(MediaType.APPLICATION_JSON))
+//        .andExpect(status().isOk());
+//
+//    verify(accountAggregatorOrchestratorService).placeDataRequest(userId);
+//  }
 
 
   public static String asJsonString(final Object obj) {

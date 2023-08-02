@@ -3,6 +3,7 @@ package com.rupeesense.fi.fiu;
 import static com.rupeesense.fi.ext.onemoney.OneMoneyUtils.writeValueAsStringSilently;
 import static com.rupeesense.fi.model.ConsentStatus.ACTIVE;
 import static com.rupeesense.fi.model.ConsentStatus.PAUSED;
+import static com.rupeesense.fi.model.ConsentStatus.REJECTED;
 import static com.rupeesense.fi.model.ConsentStatus.REVOKED;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,56 +68,39 @@ public class FIUService {
 
   }
 
-//  public void updateConsentAndHandleFromNotification(ConsentNotificationRequest consentNotificationRequest) {
-//    ConsentHandle consentHandle = repositoryFacade.getConsentHandle(
-//        consentNotificationRequest.getConsentStatusNotification().getConsentHandle(),
-//        AAIdentifier.ONEMONEY);
-//    if (consentHandle == null) {
-//      throw new IllegalArgumentException("No consent handle found for the given consent handle id: "
-//          + consentNotificationRequest.getConsentStatusNotification().getConsentHandle());
-//    }
-//
-//    Consent consent = repositoryFacade
-//        .findByConsentId(consentNotificationRequest.getConsentStatusNotification()
-//            .getConsentId());
-//
-//    switch (consentNotificationRequest.getConsentStatusNotification().getConsentStatus()) {
-//      case ACTIVE:
-//        // if consent already exists and is not active, update it
-//        // this can be the case when user marks the consent as paused and then again marks it as active
-//        if (consent != null) {
-//          consent.setStatus(ACTIVE);
-//          repositoryFacade.save(consent);
-//        } else {
-//          //consent is not present, fetch it from AA and save it
-//          String consentId = consentNotificationRequest.getConsentStatusNotification().getConsentId();
-//          OneMoneyConsentArtifactAPIResponse response = accountAggregatorOrchestratorService.fetchConsentArtifact(consentId);
-//          consent = createAndSaveConsent(consentId, response);
-//          consentHandle.setConsent(consent);
-//          consentHandle.setStatus(ConsentHandleStatus.APPROVED);
-//          repositoryFacade.save(consentHandle);
-//        }
-//        break;
-//      case REJECTED:
-//        consentHandle.setStatus(ConsentHandleStatus.REJECTED);
-//        repositoryFacade.save(consentHandle);
-//        break;
-//      case PAUSED:
-//        if (consent.getStatus() != ACTIVE) {
-//          throw new IllegalArgumentException("Consent can be paused only if it is active");
-//        }
-//        consent.setStatus(PAUSED);
-//        repositoryFacade.save(consent);
-//        break;
-//      case REVOKED:
-//        if (consent.getStatus() != ACTIVE && consent.getStatus() != PAUSED) {
-//          throw new IllegalArgumentException("Consent can be revoked only if it is active or paused");
-//        }
-//        consent.setStatus(REVOKED);
-//        repositoryFacade.save(consent);
-//        break;
-//    }
-//  }
+
+  public void updateConsent(ConsentNotificationRequest consentNotificationRequest) {
+        Consent consent = repositoryFacade.findByConsentId(consentNotificationRequest.getConsentId());
+        if (consent == null) {
+          throw new IllegalArgumentException("No consent found for the given consent id: "
+              + consentNotificationRequest.getConsentId());
+        }
+
+        switch (consentNotificationRequest.getData().getConsentStatus()) {
+          case ACTIVE:
+            consent.setStatus(ACTIVE);
+            break;
+          case PAUSED:
+            if (consent.getStatus() != ACTIVE) {
+              throw new IllegalArgumentException("Consent can be paused only if it is active");
+            }
+            consent.setStatus(PAUSED);
+            break;
+          case REJECTED:
+            consent.setStatus(REJECTED);
+            break;
+          case REVOKED:
+            if (consent.getStatus() != ACTIVE && consent.getStatus() != PAUSED) {
+              throw new IllegalArgumentException("Consent can be revoked only if it is active or paused");
+            }
+            consent.setStatus(REVOKED);
+            break;
+          default:
+            throw new IllegalArgumentException("Invalid consent status: "
+                + consentNotificationRequest.getData().getConsentStatus());
+        }
+        repositoryFacade.save(consent);
+  }
 
   private Consent createAndSaveConsent(String consentId, OneMoneyConsentArtifactAPIResponse response) {
     Consent consent = new Consent();
