@@ -4,7 +4,7 @@ public enum PaymentMethod {
 
   CASH,
   ATM,
-  CARD_PAYMENT,
+  CARD,
   UPI,
   FT,
   OTHERS

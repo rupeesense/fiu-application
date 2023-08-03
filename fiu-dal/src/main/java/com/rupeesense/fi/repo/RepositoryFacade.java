@@ -58,8 +58,12 @@ public class RepositoryFacade {
     sessionRepository.save(session);
   }
 
-  public void saveAccount(List<Account> accounts) {
+  public void saveAccounts(List<Account> accounts) {
     accountRepository.saveAll(accounts);
+  }
+
+  public void saveAccount(Account account) {
+    accountRepository.save(account);
   }
 
   public void saveTransactions(List<Transaction> transactions) {

@@ -2,6 +2,8 @@ package com.rupeesense.fi.model.data;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,6 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * Model class for Transaction
@@ -41,8 +45,10 @@ public class Transaction {
 
   private String narration;
 
+  @Enumerated(EnumType.STRING)
   private TransactionType transactionType;
 
+  @Enumerated(EnumType.STRING)
   private PaymentMethod paymentMethod;
 
   private float currentBalance;
@@ -54,5 +60,11 @@ public class Transaction {
   private String referenceNumber;
 
   private String userId;
+
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+
+  @UpdateTimestamp
+  private LocalDateTime updatedAt;
 
 }

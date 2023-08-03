@@ -15,7 +15,6 @@ import com.rupeesense.fi.ext.setu.request.SetuDataRequest;
 import com.rupeesense.fi.ext.setu.request.SetuRequestGenerator;
 import com.rupeesense.fi.ext.setu.response.SetuConsentInitiateResponse;
 import com.rupeesense.fi.ext.setu.response.SetuDataResponse;
-import com.rupeesense.fi.ext.setu.response.SetuDataResponse.Profile.Holder;
 import com.rupeesense.fi.ext.setu.response.SetuSessionResponse;
 import com.rupeesense.fi.model.AAIdentifier;
 import com.rupeesense.fi.model.Consent;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class FIUService {
@@ -107,7 +107,7 @@ public class FIUService {
     switch (sessionNotificationEvent.getData().getStatus()) {
       case COMPLETED:
         //fetch and save all data
-        getAndSaveData(sessionNotificationEvent.getDataSessionId());
+        getAndSaveData(session);
         session.setStatus(SessionStatus.COMPLETED);
         break;
       case FAILED:
@@ -127,16 +127,12 @@ public class FIUService {
     repositoryFacade.save(session);
   }
 
-  public void getAndSaveData(String sessionId) {
-    SetuDataResponse setuDataResponse = setuFIUService.getData(sessionId);
-    //convert to entities and save in DB.
-    List<Account> accounts = new ArrayList<>();
-
+  public void getAndSaveData(Session session) {
+    SetuDataResponse setuDataResponse = setuFIUService.getData(session.getId());
     // Iterate through each data payload
     for (SetuDataResponse.DataPayload dataPayload : setuDataResponse.getDataPayload()) {
       // For each account-level data
       for (SetuDataResponse.AccountLevelData accountLevelData : dataPayload.getData()) {
-
         // Create account object
         Account account = new Account();
 
@@ -155,17 +151,14 @@ public class FIUService {
         account.setMicrCode(accountData.getSummary().getMicrCode());
         account.setCurrency(accountData.getSummary().getCurrency());
         account.setBalance(Float.parseFloat(accountData.getSummary().getCurrentBalance()));
-        // Assuming that openingDate and balanceDateTime are in format yyyy-MM-dd'T'HH:mm:ss
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         account.setOpeningDate(LocalDateTime.parse(accountData.getSummary().getOpeningDate(), formatter));
         account.setBalanceDateTime(LocalDateTime.parse(accountData.getSummary().getBalanceDateTime(), formatter));
         account.setStatus(Account.Status.valueOf(accountData.getSummary().getStatus()));
         account.setHolding(Account.Holding.valueOf(accountData.getProfile().getHolders().getType()));
-        account.setType(Account.AccountType.valueOf(accountData.getType()));
-        // Assume that createdAt and updatedAt are set at the current time
-        account.setCreatedAt(LocalDateTime.now());
-        account.setUpdatedAt(LocalDateTime.now());
-
+        account.setType(Account.AccountType.valueOf(accountData.getType().toUpperCase()));
+        account.setTxnRefreshedAt(LocalDateTime.now());
+        account.setUserId(session.getUserId());
         // Create and fill holder details
         List<AccountHolder> holders = new ArrayList<>();
         for (SetuDataResponse.Profile.Holder holderData : accountData.getProfile().getHolders().getHolder()) {
@@ -183,6 +176,7 @@ public class FIUService {
         }
         account.setHolders(holders);
 
+        repositoryFacade.saveAccount(account);
         // Create and fill transaction details
         List<Transaction> transactions = new ArrayList<>();
         for (SetuDataResponse.Transactions.Transaction transactionData : accountData.getTransactions().getTransaction()) {
@@ -199,15 +193,11 @@ public class FIUService {
           transaction.setTransactionTimeStamp(LocalDateTime.parse(transactionData.getTransactionTimestamp(), formatter));
           transaction.setValueDate(LocalDateTime.parse(transactionData.getValueDate(), formatter));
           transaction.setReferenceNumber(transactionData.getReference());
+          transaction.setUserId(session.getUserId());
           transactions.add(transaction);
         }
-
         repositoryFacade.saveTransactions(transactions);
-        // Add account to list
-        accounts.add(account);
-
       }
-      repositoryFacade.saveAccount(accounts);
     }
   }
 

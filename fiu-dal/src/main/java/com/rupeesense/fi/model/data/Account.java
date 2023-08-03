@@ -72,6 +72,7 @@ public class Account {
   }
 
   public enum AccountType {
+    DEPOSIT,
     SAVINGS
   }
 }
