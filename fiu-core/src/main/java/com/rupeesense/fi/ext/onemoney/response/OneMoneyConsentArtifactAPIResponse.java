@@ -1,7 +1,7 @@
 package com.rupeesense.fi.ext.onemoney.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest.ConsentDetail;
+import com.rupeesense.fi.ext.ConsentDetail;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,9 @@
-package com.rupeesense.fi.ext.onemoney.request;
+package com.rupeesense.fi.ext;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rupeesense.fi.ext.commons.FIDataRange;
+import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -10,63 +12,52 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
+public class ConsentDetail {
 
-  @JsonProperty("ConsentDetail")
-  private ConsentDetail consentDetail;
+  @JsonProperty("consentStart")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+  private LocalDateTime consentStart;
 
-  @Getter
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class ConsentDetail {
+  @JsonProperty("consentExpiry")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+  private LocalDateTime consentExpiry;
 
-    @JsonProperty("consentStart")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime consentStart;
+  @JsonProperty("consentMode")
+  private String consentMode; //could be VIEW, STORE, QUERY or STREAM
 
-    @JsonProperty("consentExpiry")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime consentExpiry;
+  @JsonProperty("fetchType")
+  private String fetchType;
 
-    @JsonProperty("consentMode")
-    private String consentMode; //could be VIEW, STORE, QUERY or STREAM
+  @JsonProperty("consentTypes")
+  private List<ConsentType> consentTypes;
 
-    @JsonProperty("fetchType")
-    private String fetchType;
+  @JsonProperty("fiTypes")
+  private List<FIType> fiTypes;
 
-    @JsonProperty("consentTypes")
-    private List<ConsentType> consentTypes;
+  @JsonProperty("DataConsumer")
+  private DataConsumer dataConsumer;
 
-    @JsonProperty("fiTypes")
-    private List<FIType> fiTypes;
+  @JsonProperty("Customer")
+  private Customer customer;
 
-    @JsonProperty("DataConsumer")
-    private DataConsumer dataConsumer;
+  @JsonProperty("Purpose")
+  private Purpose purpose;
 
-    @JsonProperty("Customer")
-    private Customer customer;
+  @JsonProperty("FIDataRange")
+  private FIDataRange fiDataRange;
 
-    @JsonProperty("Purpose")
-    private Purpose purpose;
+  @JsonProperty("DataLife")
+  private DataLife dataLife;
 
-    @JsonProperty("FIDataRange")
-    private FIDataRange fiDataRange;
+  @JsonProperty("Frequency")
+  private Frequency frequency;
 
-    @JsonProperty("DataLife")
-    private DataLife dataLife;
-
-    @JsonProperty("Frequency")
-    private Frequency frequency;
-
-    @JsonProperty("DataFilter")
-    private List<DataFilter> dataFilter;
-
-  }
+  @JsonProperty("DataFilter")
+  private List<DataFilter> dataFilter;
 
   public enum FIType {
     DEPOSIT, TERM_DEPOSIT, RECURRING_DEPOSIT, SIP, CP, GOVT_SECURITIES, EQUITIES, BONDS, DEBENTURES, MUTUAL_FUNDS, ETF, IDR, CIS, AIF, INSURANCE_POLICIES, NPS, INVIT, REIT, OTHER
@@ -160,5 +151,4 @@ public class OneMoneyConsentAPIRequest extends OneMoneyRequest {
     @JsonProperty("value")
     private String value;
   }
-
 }

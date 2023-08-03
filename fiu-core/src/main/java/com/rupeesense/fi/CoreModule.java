@@ -10,14 +10,16 @@ public class CoreModule {
 
   public static final String ONE_MONEY_CLIENT_NAME = "one-money-web-client";
 
-  //TODO: make this config driven
-  @Bean(name = ONE_MONEY_CLIENT_NAME)
-  public WebClient getOneMoneyWebClient() {
+  public static final String SETU_CLIENT_NAME = "setu-web-client";
+
+  @Bean(name = SETU_CLIENT_NAME)
+  public WebClient getSetuClient() {
     return WebClient
         .builder()
-        .baseUrl("https://api-sandbox.onemoney.in")
+        .baseUrl("https://fiu-uat.setu.co")
         .defaultHeader("Content-Type", "application/json")
-        .defaultHeader("client_api_key", System.getenv("CLIENT_API_KEY"))
+        .defaultHeader("x-client-id", "f26b25b8-8e33-4c86-a28e-4575ddeeb09a")
+        .defaultHeader("x-client-secret", "02325c82-505e-4b62-9135-0325f25f4dfd")
         .build();
   }
 
