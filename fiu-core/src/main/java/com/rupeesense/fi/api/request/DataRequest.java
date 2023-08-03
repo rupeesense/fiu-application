@@ -2,7 +2,6 @@ package com.rupeesense.fi.api.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rupeesense.fi.model.AAIdentifier;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class FIUService {
@@ -231,9 +230,6 @@ public class FIUService {
         }
         consent.setStatus(ConsentStatus.REVOKED);
         break;
-      default:
-        throw new IllegalArgumentException("Invalid consent status: "
-            + notificationEvent.getData().getStatus());
     }
     repositoryFacade.save(consent);
   }

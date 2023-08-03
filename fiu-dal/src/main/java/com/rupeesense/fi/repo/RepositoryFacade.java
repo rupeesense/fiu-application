@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 public class RepositoryFacade {
 
   private final ConsentRepository consentRepository;
-
   private final ConsentHandleRepository consentHandleRepository;
 
   private final SessionRepository sessionRepository;
@@ -50,6 +49,10 @@ public class RepositoryFacade {
     return consentRepository.findByConsentId(consentId);
   }
 
+  public void save(ConsentHandle consentHandle) {
+    consentHandleRepository.save(consentHandle);
+  }
+
   public void save(Consent consent) {
     consentRepository.save(consent);
   }
@@ -69,5 +72,4 @@ public class RepositoryFacade {
   public void saveTransactions(List<Transaction> transactions) {
     transactionRepository.saveAll(transactions);
   }
-
 }

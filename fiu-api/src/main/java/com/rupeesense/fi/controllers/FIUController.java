@@ -5,9 +5,9 @@ import static com.rupeesense.fi.APIConstants.FIU_CONSENT_CREATE;
 import static com.rupeesense.fi.APIConstants.FIU_DATA_REQUEST_CREATE;
 
 import com.rupeesense.fi.api.request.ConsentNotificationEvent;
-import com.rupeesense.fi.api.request.NotificationEvent;
 import com.rupeesense.fi.api.request.ConsentRequest;
 import com.rupeesense.fi.api.request.DataRequest;
+import com.rupeesense.fi.api.request.NotificationEvent;
 import com.rupeesense.fi.api.request.SessionNotificationEvent;
 import com.rupeesense.fi.api.response.ConsentResponse;
 import com.rupeesense.fi.fiu.FIUService;
@@ -39,9 +39,9 @@ public class FIUController {
   @PostMapping(path = FIU_CONSENT_CREATE,
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-    public ConsentResponse createConsent(@RequestBody @Valid ConsentRequest consentRequest) {
-      return fiuService.createConsent(consentRequest);
-    }
+  public ConsentResponse createConsent(@RequestBody @Valid ConsentRequest consentRequest) {
+    return fiuService.createConsent(consentRequest);
+  }
 
   @Transactional
   @PostMapping(path = AA_CONSENT_NOTIFICATION,
@@ -54,7 +54,6 @@ public class FIUController {
       fiuService.updateConsent((ConsentNotificationEvent) notificationEvent);
     }
   }
-
 
   @Transactional
   @PostMapping(path = FIU_DATA_REQUEST_CREATE,
