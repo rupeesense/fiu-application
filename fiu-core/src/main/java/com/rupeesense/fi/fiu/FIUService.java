@@ -1,15 +1,10 @@
 package com.rupeesense.fi.fiu;
 
 import static com.rupeesense.fi.ext.onemoney.OneMoneyUtils.writeValueAsStringSilently;
-import static com.rupeesense.fi.model.ConsentStatus.ACTIVE;
-import static com.rupeesense.fi.model.ConsentStatus.EXPIRED;
-import static com.rupeesense.fi.model.ConsentStatus.PAUSED;
-import static com.rupeesense.fi.model.ConsentStatus.REJECTED;
-import static com.rupeesense.fi.model.ConsentStatus.REVOKED;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rupeesense.fi.api.request.NotificationEvent;
+import com.rupeesense.fi.api.request.ConsentNotificationEvent;
 import com.rupeesense.fi.api.request.ConsentRequest;
 import com.rupeesense.fi.api.request.DataRequest;
 import com.rupeesense.fi.api.request.SessionNotificationEvent;
@@ -19,12 +14,25 @@ import com.rupeesense.fi.ext.setu.request.SetuConsentAPIRequest;
 import com.rupeesense.fi.ext.setu.request.SetuDataRequest;
 import com.rupeesense.fi.ext.setu.request.SetuRequestGenerator;
 import com.rupeesense.fi.ext.setu.response.SetuConsentInitiateResponse;
+import com.rupeesense.fi.ext.setu.response.SetuDataResponse;
+import com.rupeesense.fi.ext.setu.response.SetuDataResponse.Profile.Holder;
 import com.rupeesense.fi.ext.setu.response.SetuSessionResponse;
 import com.rupeesense.fi.model.AAIdentifier;
 import com.rupeesense.fi.model.Consent;
+import com.rupeesense.fi.model.ConsentStatus;
 import com.rupeesense.fi.model.Session;
+import com.rupeesense.fi.model.SessionStatus;
+import com.rupeesense.fi.model.data.Account;
+import com.rupeesense.fi.model.data.AccountHolder;
+import com.rupeesense.fi.model.data.PaymentMethod;
+import com.rupeesense.fi.model.data.Transaction;
+import com.rupeesense.fi.model.data.TransactionType;
 import com.rupeesense.fi.repo.RepositoryFacade;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -92,43 +100,151 @@ public class FIUService {
   }
 
   public void receiveSessionNotification(SessionNotificationEvent sessionNotificationEvent) {
-    sessionNotificationEvent.get
+    Session session = repositoryFacade.getSession(sessionNotificationEvent.getDataSessionId());
+    if (session == null) {
+      throw new IllegalArgumentException("No session found for the given session id: " + sessionNotificationEvent.getDataSessionId());
+    }
+    switch (sessionNotificationEvent.getData().getStatus()) {
+      case COMPLETED:
+        //fetch and save all data
+        getAndSaveData(sessionNotificationEvent.getDataSessionId());
+        session.setStatus(SessionStatus.COMPLETED);
+        break;
+      case FAILED:
+        session.setStatus(SessionStatus.FAILED);
+        break;
+      case EXPIRED:
+        session.setStatus(SessionStatus.EXPIRED);
+        break;
+      case PARTIAL:
+        //fetch partial data
+        //TODO: not implemented
+        session.setStatus(SessionStatus.PARTIAL);
+        break;
+      default:
+        throw new IllegalArgumentException("Invalid session status: " + sessionNotificationEvent.getData().getStatus());
+    }
+    repositoryFacade.save(session);
+  }
+
+  public void getAndSaveData(String sessionId) {
+    SetuDataResponse setuDataResponse = setuFIUService.getData(sessionId);
+    //convert to entities and save in DB.
+    List<Account> accounts = new ArrayList<>();
+
+    // Iterate through each data payload
+    for (SetuDataResponse.DataPayload dataPayload : setuDataResponse.getDataPayload()) {
+      // For each account-level data
+      for (SetuDataResponse.AccountLevelData accountLevelData : dataPayload.getData()) {
+
+        // Create account object
+        Account account = new Account();
+
+        // Fill in account details
+        account.setAccountId(UUID.randomUUID().toString()); // Generate unique UUID
+        account.setFipID(dataPayload.getFipId());
+        account.setMaskedAccountNumber(accountLevelData.getMaskedAccNumber());
+        account.setLinkRefNumber(accountLevelData.getLinkRefNumber());
+
+        // Fill in account details from Financial Information Payload
+        SetuDataResponse.AccountData accountData = accountLevelData.getInformationPayload().getAccount();
+        account.setBranch(accountData.getSummary().getBranch());
+        account.setCurrentODLimit(Float.parseFloat(accountData.getSummary().getCurrentODLimit()));
+        account.setDrawingLimit(Float.parseFloat(accountData.getSummary().getDrawingLimit()));
+        account.setIfscCode(accountData.getSummary().getIfscCode());
+        account.setMicrCode(accountData.getSummary().getMicrCode());
+        account.setCurrency(accountData.getSummary().getCurrency());
+        account.setBalance(Float.parseFloat(accountData.getSummary().getCurrentBalance()));
+        // Assuming that openingDate and balanceDateTime are in format yyyy-MM-dd'T'HH:mm:ss
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        account.setOpeningDate(LocalDateTime.parse(accountData.getSummary().getOpeningDate(), formatter));
+        account.setBalanceDateTime(LocalDateTime.parse(accountData.getSummary().getBalanceDateTime(), formatter));
+        account.setStatus(Account.Status.valueOf(accountData.getSummary().getStatus()));
+        account.setHolding(Account.Holding.valueOf(accountData.getProfile().getHolders().getType()));
+        account.setType(Account.AccountType.valueOf(accountData.getType()));
+        // Assume that createdAt and updatedAt are set at the current time
+        account.setCreatedAt(LocalDateTime.now());
+        account.setUpdatedAt(LocalDateTime.now());
+
+        // Create and fill holder details
+        List<AccountHolder> holders = new ArrayList<>();
+        for (SetuDataResponse.Profile.Holder holderData : accountData.getProfile().getHolders().getHolder()) {
+          AccountHolder holder = new AccountHolder();
+          holder.setAddress(holderData.getAddress());
+          holder.setCkycCompliance(holderData.getCkycCompliance());
+          holder.setDob(holderData.getDob());
+          holder.setEmail(holderData.getEmail());
+          holder.setMobile(holderData.getMobile());
+          holder.setName(holderData.getName());
+          holder.setNominee(holderData.getNominee());
+          holder.setPan(holderData.getPan());
+          holder.setAccount(account); // Set account of holder
+          holders.add(holder);
+        }
+        account.setHolders(holders);
+
+        // Create and fill transaction details
+        List<Transaction> transactions = new ArrayList<>();
+        for (SetuDataResponse.Transactions.Transaction transactionData : accountData.getTransactions().getTransaction()) {
+          Transaction transaction = new Transaction();
+          transaction.setId(UUID.randomUUID().toString()); // Generate unique UUID
+          transaction.setAccount(account);
+          transaction.setExternalTransactionId(transactionData.getTxnId());
+          transaction.setAmount(Float.parseFloat(transactionData.getAmount()));
+          transaction.setNarration(transactionData.getNarration());
+          // Assuming TransactionType and PaymentMethod enums exist in Transaction class
+          transaction.setTransactionType(TransactionType.valueOf(transactionData.getType()));
+          transaction.setPaymentMethod(PaymentMethod.valueOf(transactionData.getMode()));
+          transaction.setCurrentBalance(Float.parseFloat(transactionData.getCurrentBalance()));
+          transaction.setTransactionTimeStamp(LocalDateTime.parse(transactionData.getTransactionTimestamp(), formatter));
+          transaction.setValueDate(LocalDateTime.parse(transactionData.getValueDate(), formatter));
+          transaction.setReferenceNumber(transactionData.getReference());
+          transactions.add(transaction);
+        }
+
+        repositoryFacade.saveTransactions(transactions);
+        // Add account to list
+        accounts.add(account);
+
+      }
+      repositoryFacade.saveAccount(accounts);
+    }
   }
 
 
-  public void updateConsent(NotificationEvent notificationEvent) {
-        Consent consent = repositoryFacade.findByConsentId(notificationEvent.getConsentId());
-        if (consent == null) {
-          throw new IllegalArgumentException("No consent found for the given consent id: "
-              + notificationEvent.getConsentId());
-        }
+  public void updateConsent(ConsentNotificationEvent notificationEvent) {
+    Consent consent = repositoryFacade.findByConsentId(notificationEvent.getConsentId());
+    if (consent == null) {
+      throw new IllegalArgumentException("No consent found for the given consent id: "
+          + notificationEvent.getConsentId());
+    }
 
-        switch (notificationEvent.getData().getConsentStatus()) {
-          case ACTIVE:
-            consent.setStatus(ACTIVE);
-            break;
-          case PAUSED:
-            if (consent.getStatus() != ACTIVE) {
-              throw new IllegalArgumentException("Consent can be paused only if it is active");
-            }
-            consent.setStatus(PAUSED);
-            break;
-          case REJECTED:
-            consent.setStatus(REJECTED);
-            break;
-          case EXPIRED:
-            consent.setStatus(EXPIRED);
-            break;
-          case REVOKED:
-            if (consent.getStatus() != ACTIVE && consent.getStatus() != PAUSED) {
-              throw new IllegalArgumentException("Consent can be revoked only if it is active or paused");
-            }
-            consent.setStatus(REVOKED);
-            break;
-          default:
-            throw new IllegalArgumentException("Invalid consent status: "
-                + notificationEvent.getData().getConsentStatus());
+    switch (notificationEvent.getData().getStatus()) {
+      case ACTIVE:
+        consent.setStatus(ConsentStatus.ACTIVE);
+        break;
+      case PAUSED:
+        if (consent.getStatus() != ConsentStatus.ACTIVE) {
+          throw new IllegalArgumentException("Consent can be paused only if it is active");
         }
-        repositoryFacade.save(consent);
+        consent.setStatus(ConsentStatus.PAUSED);
+        break;
+      case REJECTED:
+        consent.setStatus(ConsentStatus.REJECTED);
+        break;
+      case EXPIRED:
+        consent.setStatus(ConsentStatus.EXPIRED);
+        break;
+      case REVOKED:
+        if (consent.getStatus() != ConsentStatus.ACTIVE && consent.getStatus() != ConsentStatus.PAUSED) {
+          throw new IllegalArgumentException("Consent can be revoked only if it is active or paused");
+        }
+        consent.setStatus(ConsentStatus.REVOKED);
+        break;
+      default:
+        throw new IllegalArgumentException("Invalid consent status: "
+            + notificationEvent.getData().getStatus());
+    }
+    repositoryFacade.save(consent);
   }
 }

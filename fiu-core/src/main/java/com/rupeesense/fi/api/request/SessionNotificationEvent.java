@@ -19,17 +19,17 @@ import lombok.Setter;
 public class SessionNotificationEvent extends NotificationEvent {
 
   @JsonProperty("dataSessionId")
-  private String sessionId;
+  private String dataSessionId;
 
   @JsonProperty("data")
   private SessionNotificationEventData data;
 
   public SessionNotificationEvent(@JsonProperty("timestamp") String timestamp,
       @JsonProperty("notificationId") String notificationId,
-      @JsonProperty("sessionId") String sessionId,
+      @JsonProperty("dataSessionId") String dataSessionId,
       @JsonProperty("data") SessionNotificationEventData data) {
     super(timestamp, notificationId, NotificationType.SESSION_STATUS_UPDATE);
-    this.sessionId = sessionId;
+    this.dataSessionId = dataSessionId;
     this.data = data;
   }
 
@@ -74,7 +74,7 @@ public class SessionNotificationEvent extends NotificationEvent {
   @AllArgsConstructor
   public static class Fip {
 
-    @JsonProperty("accounts")
+    @JsonProperty("Accounts")
     private List<Account> accounts;
 
     @JsonProperty("fipID")

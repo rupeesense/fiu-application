@@ -4,9 +4,11 @@ import static com.rupeesense.fi.APIConstants.AA_CONSENT_NOTIFICATION;
 import static com.rupeesense.fi.APIConstants.FIU_CONSENT_CREATE;
 import static com.rupeesense.fi.APIConstants.FIU_DATA_REQUEST_CREATE;
 
+import com.rupeesense.fi.api.request.ConsentNotificationEvent;
 import com.rupeesense.fi.api.request.NotificationEvent;
 import com.rupeesense.fi.api.request.ConsentRequest;
 import com.rupeesense.fi.api.request.DataRequest;
+import com.rupeesense.fi.api.request.SessionNotificationEvent;
 import com.rupeesense.fi.api.response.ConsentResponse;
 import com.rupeesense.fi.fiu.FIUService;
 import com.rupeesense.fi.model.Session;
@@ -43,7 +45,11 @@ public class FIUController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public void receiveNotification(@RequestBody @Valid NotificationEvent notificationEvent) {
-    fiuService.updateConsent(notificationEvent);
+    if (notificationEvent instanceof SessionNotificationEvent) {
+      fiuService.receiveSessionNotification((SessionNotificationEvent) notificationEvent);
+    } else {
+      fiuService.updateConsent((ConsentNotificationEvent) notificationEvent);
+    }
   }
 
 
