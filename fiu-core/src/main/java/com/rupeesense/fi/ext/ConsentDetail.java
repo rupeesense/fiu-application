@@ -2,8 +2,8 @@ package com.rupeesense.fi.ext;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rupeesense.fi.ext.commons.FIDataRange;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.FIDataRange;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;

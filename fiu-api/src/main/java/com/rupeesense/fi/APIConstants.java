@@ -11,4 +11,6 @@ public class APIConstants {
   public static final String AA_CONSENT_NOTIFICATION = "/aa/Consent/Notification";
 
   public static final String FIU_CONSENT_CREATE = "/v1/consent/initiate";
+
+  public static final String FIU_DATA_REQUEST_CREATE = "/v1/data/request";
 }

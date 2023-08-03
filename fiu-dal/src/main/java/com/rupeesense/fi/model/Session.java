@@ -3,6 +3,8 @@ package com.rupeesense.fi.model;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,6 +38,7 @@ public class Session {
   @Column(name = "requested_at")
   private LocalDateTime requestedAt;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "status")
   private SessionStatus status;
 

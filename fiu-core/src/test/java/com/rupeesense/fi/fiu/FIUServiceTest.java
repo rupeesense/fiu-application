@@ -2,25 +2,13 @@ package com.rupeesense.fi.fiu;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rupeesense.fi.api.request.ConsentNotificationRequest;
-import com.rupeesense.fi.ext.ConsentDetail;
-import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentArtifactAPIResponse;
 import com.rupeesense.fi.ext.setu.SetuFIUService;
 import com.rupeesense.fi.ext.setu.request.SetuRequestGenerator;
-import com.rupeesense.fi.model.AAIdentifier;
-import com.rupeesense.fi.model.Consent;
-import com.rupeesense.fi.model.ConsentHandle;
-import com.rupeesense.fi.model.ConsentStatus;
 import com.rupeesense.fi.repo.RepositoryFacade;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

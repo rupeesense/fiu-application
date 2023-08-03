@@ -2,23 +2,29 @@ package com.rupeesense.fi.fiu;
 
 import static com.rupeesense.fi.ext.onemoney.OneMoneyUtils.writeValueAsStringSilently;
 import static com.rupeesense.fi.model.ConsentStatus.ACTIVE;
+import static com.rupeesense.fi.model.ConsentStatus.EXPIRED;
 import static com.rupeesense.fi.model.ConsentStatus.PAUSED;
 import static com.rupeesense.fi.model.ConsentStatus.REJECTED;
 import static com.rupeesense.fi.model.ConsentStatus.REVOKED;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rupeesense.fi.api.request.ConsentNotificationRequest;
+import com.rupeesense.fi.api.request.NotificationEvent;
 import com.rupeesense.fi.api.request.ConsentRequest;
+import com.rupeesense.fi.api.request.DataRequest;
+import com.rupeesense.fi.api.request.SessionNotificationEvent;
 import com.rupeesense.fi.api.response.ConsentResponse;
-import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentArtifactAPIResponse;
 import com.rupeesense.fi.ext.setu.SetuFIUService;
 import com.rupeesense.fi.ext.setu.request.SetuConsentAPIRequest;
+import com.rupeesense.fi.ext.setu.request.SetuDataRequest;
 import com.rupeesense.fi.ext.setu.request.SetuRequestGenerator;
 import com.rupeesense.fi.ext.setu.response.SetuConsentInitiateResponse;
+import com.rupeesense.fi.ext.setu.response.SetuSessionResponse;
 import com.rupeesense.fi.model.AAIdentifier;
 import com.rupeesense.fi.model.Consent;
+import com.rupeesense.fi.model.Session;
 import com.rupeesense.fi.repo.RepositoryFacade;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,19 +70,40 @@ public class FIUService {
         consent.getConsentId(), consent.getStatus());
   }
 
-  public void getData(String sessionId) {
+//  public void getData(String sessionId) {
+//
+//  }
 
+  public Session createDataRequest(DataRequest dataRequest) {
+    Consent consent = repositoryFacade.findActiveConsentByUserId(dataRequest.getUserVpa());
+    if (consent == null) {
+      throw new IllegalArgumentException("No active consent found for the given user id: " + dataRequest.getUserVpa());
+    }
+    SetuDataRequest setuDataRequest = setuRequestGenerator.generateDataRequest(consent.getConsentId(), dataRequest.getFrom(), dataRequest.getTo());
+    SetuSessionResponse response = setuFIUService.createDataRequest(setuDataRequest);
+    Session session = new Session();
+    session.setId(response.getId());
+    session.setRequestedAt(LocalDateTime.now());
+    session.setConsent(consent);
+    session.setStatus(response.getStatus());
+    session.setUserId(dataRequest.getUserVpa());
+    repositoryFacade.save(session);
+    return session;
+  }
+
+  public void receiveSessionNotification(SessionNotificationEvent sessionNotificationEvent) {
+    sessionNotificationEvent.get
   }
 
 
-  public void updateConsent(ConsentNotificationRequest consentNotificationRequest) {
-        Consent consent = repositoryFacade.findByConsentId(consentNotificationRequest.getConsentId());
+  public void updateConsent(NotificationEvent notificationEvent) {
+        Consent consent = repositoryFacade.findByConsentId(notificationEvent.getConsentId());
         if (consent == null) {
           throw new IllegalArgumentException("No consent found for the given consent id: "
-              + consentNotificationRequest.getConsentId());
+              + notificationEvent.getConsentId());
         }
 
-        switch (consentNotificationRequest.getData().getConsentStatus()) {
+        switch (notificationEvent.getData().getConsentStatus()) {
           case ACTIVE:
             consent.setStatus(ACTIVE);
             break;
@@ -89,6 +116,9 @@ public class FIUService {
           case REJECTED:
             consent.setStatus(REJECTED);
             break;
+          case EXPIRED:
+            consent.setStatus(EXPIRED);
+            break;
           case REVOKED:
             if (consent.getStatus() != ACTIVE && consent.getStatus() != PAUSED) {
               throw new IllegalArgumentException("Consent can be revoked only if it is active or paused");
@@ -97,21 +127,8 @@ public class FIUService {
             break;
           default:
             throw new IllegalArgumentException("Invalid consent status: "
-                + consentNotificationRequest.getData().getConsentStatus());
+                + notificationEvent.getData().getConsentStatus());
         }
         repositoryFacade.save(consent);
   }
-
-  private Consent createAndSaveConsent(String consentId, OneMoneyConsentArtifactAPIResponse response) {
-    Consent consent = new Consent();
-    consent.setConsentId(consentId);
-    consent.setUserId(response.getConsentDetail().getCustomer().getId());
-    consent.setAccountAggregator(AAIdentifier.ONEMONEY);
-    consent.setStatus(ACTIVE);
-    consent.setConsentArtifact(writeValueAsStringSilently(objectMapper, response.getConsentDetail()));
-    consent.setDigitalSignature(response.getConsentDetailDigitalSignature());
-    repositoryFacade.save(consent);
-    return consent;
-  }
-
 }

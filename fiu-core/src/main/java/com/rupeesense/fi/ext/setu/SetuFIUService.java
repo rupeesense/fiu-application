@@ -8,7 +8,9 @@ import com.rupeesense.fi.aa.exception.AAServerException;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
 import com.rupeesense.fi.ext.onemoney.response.OneMoneyConsentInitiateAPIResponse;
 import com.rupeesense.fi.ext.setu.request.SetuConsentAPIRequest;
+import com.rupeesense.fi.ext.setu.request.SetuDataRequest;
 import com.rupeesense.fi.ext.setu.response.SetuConsentInitiateResponse;
+import com.rupeesense.fi.ext.setu.response.SetuSessionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.Name;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,16 @@ public class SetuFIUService {
         .retrieve()
         .onStatus(HttpStatus::isError, this::createException)
         .bodyToMono(SetuConsentInitiateResponse.class)
+        .block();
+  }
+
+  public SetuSessionResponse createDataRequest(SetuDataRequest request) {
+    return webClient.post()
+        .uri("/sessions")
+        .bodyValue(request)
+        .retrieve()
+        .onStatus(HttpStatus::isError, this::createException)
+        .bodyToMono(SetuSessionResponse.class)
         .block();
   }
 

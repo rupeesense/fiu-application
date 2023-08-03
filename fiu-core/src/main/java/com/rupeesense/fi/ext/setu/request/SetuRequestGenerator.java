@@ -6,7 +6,7 @@ import com.rupeesense.fi.FIUServiceConfig;
 import com.rupeesense.fi.ext.ConsentDetail;
 import com.rupeesense.fi.ext.ConsentDetail.DataConsumer;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.FIDataRange;
+import com.rupeesense.fi.ext.commons.FIDataRange;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,17 @@ public class SetuRequestGenerator {
     this.fiuServiceConfig = fiuServiceConfig;
   }
 
+
+  public SetuDataRequest generateDataRequest(String consentId, LocalDateTime from, LocalDateTime to) {
+    return SetuDataRequest.builder()
+        .consentId(consentId)
+        .dataRange(FIDataRange.builder()
+            .from(from)
+            .to(to)
+            .build())
+        .format("json")
+        .build();
+  }
 
   public SetuConsentAPIRequest generateConsentRequest(String customerId) {
     LocalDateTime currentTime = LocalDateTime.now();

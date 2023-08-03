@@ -1,6 +1,7 @@
 package com.rupeesense.fi.ext.onemoney;
 
 import com.rupeesense.fi.FIUServiceConfig;
+import com.rupeesense.fi.ext.commons.FIDataRange;
 import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyConsentAPIRequest;
 import com.rupeesense.fi.ext.ConsentDetail.Category;
@@ -13,7 +14,6 @@ import com.rupeesense.fi.ext.ConsentDetail.FIType;
 import com.rupeesense.fi.ext.ConsentDetail.Frequency;
 import com.rupeesense.fi.ext.ConsentDetail.Purpose;
 import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.FIDataRange;
 import com.rupeesense.fi.model.Consent;
 import java.time.Duration;
 import java.time.LocalDateTime;

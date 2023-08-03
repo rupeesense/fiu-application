@@ -2,11 +2,14 @@ package com.rupeesense.fi.controllers;
 
 import static com.rupeesense.fi.APIConstants.AA_CONSENT_NOTIFICATION;
 import static com.rupeesense.fi.APIConstants.FIU_CONSENT_CREATE;
+import static com.rupeesense.fi.APIConstants.FIU_DATA_REQUEST_CREATE;
 
-import com.rupeesense.fi.api.request.ConsentNotificationRequest;
+import com.rupeesense.fi.api.request.NotificationEvent;
 import com.rupeesense.fi.api.request.ConsentRequest;
+import com.rupeesense.fi.api.request.DataRequest;
 import com.rupeesense.fi.api.response.ConsentResponse;
 import com.rupeesense.fi.fiu.FIUService;
+import com.rupeesense.fi.model.Session;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,7 +42,15 @@ public class FIUController {
   @PostMapping(path = AA_CONSENT_NOTIFICATION,
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public void receiveConsentNotification(@RequestBody @Valid ConsentNotificationRequest consentNotificationRequest) {
-    fiuService.updateConsent(consentNotificationRequest);
+  public void receiveNotification(@RequestBody @Valid NotificationEvent notificationEvent) {
+    fiuService.updateConsent(notificationEvent);
+  }
+
+
+  @PostMapping(path = FIU_DATA_REQUEST_CREATE,
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Session raiseDataRequest(@RequestBody @Valid DataRequest dataRequest) {
+    return fiuService.createDataRequest(dataRequest);
   }
 }

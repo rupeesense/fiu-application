@@ -35,10 +35,6 @@ public class RepositoryFacade {
     return consentRepository.findByConsentId(consentId);
   }
 
-  public void save(ConsentHandle consentHandle) {
-    consentHandleRepository.save(consentHandle);
-  }
-
   public void save(Consent consent) {
     consentRepository.save(consent);
   }
