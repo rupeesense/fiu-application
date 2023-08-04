@@ -83,7 +83,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build with Maven
+      - name: ls
+        run: ls
+      - name: pwd
+        run: pwd
+      - name: Ls LTR
         run: ls -ltr fiu-api/target/
         
       # Build and push Docker image with Buildx (don't push on PR)
