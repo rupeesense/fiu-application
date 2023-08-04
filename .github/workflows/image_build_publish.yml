@@ -87,6 +87,8 @@ jobs:
         run: ls
       - name: pwd
         run: pwd
+      - name: ls fiu-api/
+        run: ls fiu-api/
       - name: Ls LTR
         run: ls -ltr fiu-api/target/
         
