@@ -1,6 +1,7 @@
 # Use an official Java runtime as a parent image
 FROM openjdk:11-jre-slim
 RUN pwd
+RUN ls
 # Set the working directory in the container to /app
 WORKDIR /app
 
