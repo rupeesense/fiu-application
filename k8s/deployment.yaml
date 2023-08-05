@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fiu-application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fiu-application
+  template:
+    metadata:
+      labels:
+        app: fiu-application
+    spec:
+      containers:
+        - name: fiu-service
+          image: ghcr.io/rupeesense/fiu-service:main
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config/application.properties
+              subPath: application.properties
+      imagePullSecrets:
+        - name: ghcr-creds
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fiu-service-app-config
