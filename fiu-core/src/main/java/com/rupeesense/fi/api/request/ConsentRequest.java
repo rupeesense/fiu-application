@@ -1,7 +1,7 @@
 package com.rupeesense.fi.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rupeesense.fi.model.AAIdentifier;
+import com.rupeesense.fi.model.aa.AAIdentifier;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

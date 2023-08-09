@@ -1,10 +1,10 @@
 package com.rupeesense.fi.model.data;
 
+import com.rupeesense.fi.model.data.Account;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,11 +23,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "account_holder",
-    uniqueConstraints = @UniqueConstraint(
-        columnNames = {"accountId", "name"}
-    ))
-public class AccountHolder {
+@Table(name = "fip")
+public class FIP {
 
   @Id
   @GeneratedValue(generator = "UUID")
@@ -38,23 +35,7 @@ public class AccountHolder {
   @Column(name = "id", updatable = false, nullable = false)
   private String id;
 
-  private String address;
-  private String ckycCompliance;
-  private String dob;
-  private String email;
-  private String mobile;
+  private String fipId;
+
   private String name;
-  private String nominee;
-  private String pan;
-
-  @ManyToOne
-  @JoinColumn(name = "accountId", nullable = false)
-  private Account account;
-
-
-  @CreationTimestamp
-  private LocalDateTime createdAt;
-
-  @UpdateTimestamp
-  private LocalDateTime updatedAt;
 }

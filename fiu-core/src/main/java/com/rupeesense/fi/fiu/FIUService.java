@@ -16,11 +16,11 @@ import com.rupeesense.fi.ext.setu.request.SetuRequestGenerator;
 import com.rupeesense.fi.ext.setu.response.SetuConsentInitiateResponse;
 import com.rupeesense.fi.ext.setu.response.SetuDataResponse;
 import com.rupeesense.fi.ext.setu.response.SetuSessionResponse;
-import com.rupeesense.fi.model.AAIdentifier;
-import com.rupeesense.fi.model.Consent;
-import com.rupeesense.fi.model.ConsentStatus;
-import com.rupeesense.fi.model.Session;
-import com.rupeesense.fi.model.SessionStatus;
+import com.rupeesense.fi.model.aa.AAIdentifier;
+import com.rupeesense.fi.model.aa.Consent;
+import com.rupeesense.fi.model.aa.ConsentStatus;
+import com.rupeesense.fi.model.aa.Session;
+import com.rupeesense.fi.model.aa.SessionStatus;
 import com.rupeesense.fi.model.data.Account;
 import com.rupeesense.fi.model.data.AccountHolder;
 import com.rupeesense.fi.model.data.PaymentMethod;
@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -77,9 +76,6 @@ public class FIUService {
         consent.getConsentId(), consent.getStatus());
   }
 
-//  public void getData(String sessionId) {
-//
-//  }
 
   public Session createDataRequest(DataRequest dataRequest) {
     Consent consent = repositoryFacade.findActiveConsentByUserId(dataRequest.getUserVpa());
@@ -89,9 +85,10 @@ public class FIUService {
     SetuDataRequest setuDataRequest = setuRequestGenerator.generateDataRequest(consent.getConsentId(), dataRequest.getFrom(), dataRequest.getTo());
     SetuSessionResponse response = setuFIUService.createDataRequest(setuDataRequest);
     Session session = new Session();
-    session.setId(response.getId());
+    session.setSessionId(response.getId());
     session.setRequestedAt(LocalDateTime.now());
     session.setConsent(consent);
+    session.setAccountAggregator(consent.getAccountAggregator());
     session.setStatus(response.getStatus());
     session.setUserId(dataRequest.getUserVpa());
     repositoryFacade.save(session);
@@ -127,7 +124,7 @@ public class FIUService {
   }
 
   public void getAndSaveData(Session session) {
-    SetuDataResponse setuDataResponse = setuFIUService.getData(session.getId());
+    SetuDataResponse setuDataResponse = setuFIUService.getData(session.getSessionId());
     // Iterate through each data payload
     for (SetuDataResponse.DataPayload dataPayload : setuDataResponse.getDataPayload()) {
       // For each account-level data
@@ -135,8 +132,6 @@ public class FIUService {
         // Create account object
         Account account = new Account();
 
-        // Fill in account details
-        account.setAccountId(UUID.randomUUID().toString()); // Generate unique UUID
         account.setFipID(dataPayload.getFipId());
         account.setMaskedAccountNumber(accountLevelData.getMaskedAccNumber());
         account.setLinkRefNumber(accountLevelData.getLinkRefNumber());
@@ -180,9 +175,8 @@ public class FIUService {
         List<Transaction> transactions = new ArrayList<>();
         for (SetuDataResponse.Transactions.Transaction transactionData : accountData.getTransactions().getTransaction()) {
           Transaction transaction = new Transaction();
-          transaction.setId(UUID.randomUUID().toString()); // Generate unique UUID
           transaction.setAccount(account);
-          transaction.setExternalTransactionId(transactionData.getTxnId());
+          transaction.setFipTransactionId(transactionData.getTxnId());
           transaction.setAmount(Float.parseFloat(transactionData.getAmount()));
           transaction.setNarration(transactionData.getNarration());
           // Assuming TransactionType and PaymentMethod enums exist in Transaction class
@@ -193,6 +187,7 @@ public class FIUService {
           transaction.setValueDate(LocalDateTime.parse(transactionData.getValueDate(), formatter));
           transaction.setReferenceNumber(transactionData.getReference());
           transaction.setUserId(session.getUserId());
+          transaction.setFipID(account.getFipID());
           transactions.add(transaction);
         }
         repositoryFacade.saveTransactions(transactions);

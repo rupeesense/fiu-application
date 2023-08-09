@@ -1,7 +1,7 @@
 package com.rupeesense.fi.api.response;
 
-import com.rupeesense.fi.model.AAIdentifier;
-import com.rupeesense.fi.model.ConsentStatus;
+import com.rupeesense.fi.model.aa.AAIdentifier;
+import com.rupeesense.fi.model.aa.ConsentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
