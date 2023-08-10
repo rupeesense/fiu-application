@@ -11,7 +11,7 @@ import com.rupeesense.fi.api.request.NotificationEvent;
 import com.rupeesense.fi.api.request.SessionNotificationEvent;
 import com.rupeesense.fi.api.response.ConsentResponse;
 import com.rupeesense.fi.fiu.FIUService;
-import com.rupeesense.fi.model.Session;
+import com.rupeesense.fi.model.aa.Session;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
