@@ -1,4 +1,4 @@
-package com.rupeesense.fi.model;
+package com.rupeesense.fi.model.aa;
 
 public enum SessionStatus {
   PENDING,
