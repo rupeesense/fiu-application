@@ -1,18 +1,21 @@
-package com.rupeesense.fi.model;
+package com.rupeesense.fi.model.aa;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 
@@ -21,14 +24,25 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "consent")
+@Table(name = "consent",
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {"account_aggregator", "consent_id"}
+    ))
 public class Consent {
 
   @Id
-  @Column(name = "consent_id")
+  @GeneratedValue(generator = "UUID")
+  @GenericGenerator(
+      name = "UUID",
+      strategy = "org.hibernate.id.UUIDGenerator"
+  )
+  @Column(name = "id", updatable = false, nullable = false)
+  private String id;
+
+  @Column(name = "consent_id",  updatable = false, nullable = false)
   private String consentId;
 
-  @Column(name = "user_id", nullable = false)
+  @Column(name = "user_id", updatable = false, nullable = false)
   private String userId;
 
   @Enumerated(EnumType.STRING)
@@ -36,16 +50,12 @@ public class Consent {
   private ConsentStatus status;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "account_aggregator", nullable = false)
+  @Column(name = "account_aggregator", updatable = false, nullable = false)
   private AAIdentifier accountAggregator;
 
   @Lob
   @Column(name = "consent_request")
   private String consentArtifact;
-
-  @Lob
-  @Column(name = "digital_signature")
-  private String digitalSignature;
 
   @CreationTimestamp
   @Column(name = "created_at")
