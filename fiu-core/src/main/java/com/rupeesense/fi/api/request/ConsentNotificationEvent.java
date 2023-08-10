@@ -4,31 +4,37 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rupeesense.fi.model.aa.ConsentStatus;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+@Data
 @NoArgsConstructor
-@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsentNotificationEvent extends NotificationEvent {
 
+  @NotBlank
   @JsonProperty("consentId")
   private String consentId;
 
+  @NotNull
+  @Valid
   @JsonProperty("data")
   private ConsentNotificationEventData data;
 
 
-  @Setter
+  @Data
   @NoArgsConstructor
-  @Getter
   @AllArgsConstructor
   @JsonIgnoreProperties(ignoreUnknown = true)
   public static class ConsentNotificationEventData {
 
+    @NotNull
     @JsonProperty("status")
     private ConsentStatus status;
   }
