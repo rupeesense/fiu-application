@@ -1,6 +1,5 @@
-package com.rupeesense.fi.ext.onemoney;
+package com.rupeesense.fi.ext.commons;
 
-import com.rupeesense.fi.FIUServiceConfig;
 import com.rupeesense.fi.ext.ConsentDetail;
 import com.rupeesense.fi.ext.ConsentDetail.Category;
 import com.rupeesense.fi.ext.ConsentDetail.ConsentType;
@@ -12,11 +11,10 @@ import com.rupeesense.fi.ext.ConsentDetail.Purpose;
 import java.time.Duration;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OneMoneyRequestGenerator {
+public class ConsentRequestDefaults {
 
 
   //reference: https://api.rebit.co.in/purpose
@@ -44,12 +42,5 @@ public class OneMoneyRequestGenerator {
   public static final List<FIType> SUPPORTED_FI_TYPES = List.of(FIType.DEPOSIT);
 
   public static final TemporalAmount CONSENT_EXPIRY_DURATION = Duration.ofDays(365);
-
-  private final FIUServiceConfig fiuServiceConfig;
-
-  @Autowired
-  public OneMoneyRequestGenerator(FIUServiceConfig fiuServiceConfig) {
-    this.fiuServiceConfig = fiuServiceConfig;
-  }
 
 }
