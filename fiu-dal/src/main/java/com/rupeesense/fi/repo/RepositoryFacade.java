@@ -6,6 +6,8 @@ import com.rupeesense.fi.model.aa.Session;
 import com.rupeesense.fi.model.data.Account;
 import com.rupeesense.fi.model.data.Transaction;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +34,15 @@ public class RepositoryFacade {
     return consentRepository.findFirstByUserIdAndStatusOrderByCreatedAtDesc(userId, ConsentStatus.ACTIVE);
   }
 
+  public Optional<Account> getAccountIfItExists(String fipID, String userId, String linkRefNumber) {
+    return accountRepository.findAccountByFipIDAndUserIdAndLinkRefNumber(fipID, userId, linkRefNumber);
+  }
+
+  public List<Transaction> getTransactionsForAccountAndUser(String accountId, String userId) {
+    return transactionRepository.getTransactionByAccountAndUserId(accountId, userId);
+  }
+
+
   public Session getSession(String sessionId) {
     return sessionRepository.findBySessionId(sessionId);
   }
@@ -56,7 +67,7 @@ public class RepositoryFacade {
     accountRepository.save(account);
   }
 
-  public void saveTransactions(List<Transaction> transactions) {
+  public void saveTransactions(Set<Transaction> transactions) {
     transactionRepository.saveAll(transactions);
   }
 }

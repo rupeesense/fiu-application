@@ -2,6 +2,7 @@ package com.rupeesense.fi.model.data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +28,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(
     name = "account",
     uniqueConstraints = @UniqueConstraint(
-        columnNames = {"userId", "fip_id", "maskedAccountNumber"}
+        columnNames = {"userId", "fip_id", "linkRefNumber"}
     )
 )
 public class Account {
@@ -47,7 +48,9 @@ public class Account {
   @Column(nullable = false)
   private String maskedAccountNumber;
 
+  @Column(nullable = false)
   private String linkRefNumber;
+
   private String branch;
 
   @Column(name = "currentODLimit", columnDefinition = "float")
@@ -80,7 +83,7 @@ public class Account {
   private Holding holding;
 
   @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private List<AccountHolder> holders;
+  private Set<AccountHolder> holders;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)

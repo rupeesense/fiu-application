@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Setter
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @Entity
 @Table(
@@ -48,6 +50,7 @@ public class Transaction {
   @JoinColumn(name = "account_id", nullable = false)
   private Account account;
 
+  @EqualsAndHashCode.Include
   @Column(name = "fip_txn_id", updatable = false, nullable = false)
   private String fipTransactionId;
 
@@ -77,6 +80,7 @@ public class Transaction {
   @Column(updatable = false, nullable = false)
   private String referenceNumber;
 
+  @EqualsAndHashCode.Include
   @Column(name = "fip_id", nullable = false)
   private String fipID;
 

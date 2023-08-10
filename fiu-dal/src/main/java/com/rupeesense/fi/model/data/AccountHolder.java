@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "account_holder",
     uniqueConstraints = @UniqueConstraint(
         columnNames = {"accountId", "name"}
@@ -39,18 +41,26 @@ public class AccountHolder {
   private String id;
 
   private String address;
+
   private String ckycCompliance;
+
   private String dob;
+
   private String email;
+
   private String mobile;
+
+  @EqualsAndHashCode.Include
   private String name;
+
   private String nominee;
+
   private String pan;
 
+  @EqualsAndHashCode.Include
   @ManyToOne
   @JoinColumn(name = "accountId", nullable = false)
   private Account account;
-
 
   @CreationTimestamp
   private LocalDateTime createdAt;

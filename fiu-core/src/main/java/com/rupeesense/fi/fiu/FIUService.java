@@ -30,9 +30,12 @@ import com.rupeesense.fi.repo.RepositoryFacade;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class FIUService {
@@ -130,7 +133,8 @@ public class FIUService {
       // For each account-level data
       for (SetuDataResponse.AccountLevelData accountLevelData : dataPayload.getData()) {
         // Create account object
-        Account account = new Account();
+        Account account = repositoryFacade.getAccountIfItExists(dataPayload.getFipId(), session.getUserId(), accountLevelData.getLinkRefNumber())
+            .orElseGet(Account::new);
 
         account.setFipID(dataPayload.getFipId());
         account.setMaskedAccountNumber(accountLevelData.getMaskedAccNumber());
@@ -154,7 +158,7 @@ public class FIUService {
         account.setTxnRefreshedAt(LocalDateTime.now());
         account.setUserId(session.getUserId());
         // Create and fill holder details
-        List<AccountHolder> holders = new ArrayList<>();
+        Set<AccountHolder> holders = new HashSet<>();
         for (SetuDataResponse.Profile.Holder holderData : accountData.getProfile().getHolders().getHolder()) {
           AccountHolder holder = new AccountHolder();
           holder.setAddress(holderData.getAddress());
@@ -168,11 +172,14 @@ public class FIUService {
           holder.setAccount(account); // Set account of holder
           holders.add(holder);
         }
-        account.setHolders(holders);
+        account.getHolders().addAll(holders);
 
         repositoryFacade.saveAccount(account);
         // Create and fill transaction details
-        List<Transaction> transactions = new ArrayList<>();
+        Set<Transaction> transactions = new HashSet<>();
+        if (StringUtils.hasLength(account.getAccountId())) {
+          transactions.addAll(repositoryFacade.getTransactionsForAccountAndUser(account.getAccountId(), session.getUserId()));
+        }
         for (SetuDataResponse.Transactions.Transaction transactionData : accountData.getTransactions().getTransaction()) {
           Transaction transaction = new Transaction();
           transaction.setAccount(account);
