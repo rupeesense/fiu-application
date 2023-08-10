@@ -7,13 +7,13 @@
     <parent>
         <groupId>com.rupeesense.fi</groupId>
         <artifactId>fiu-service</artifactId>
-        <version>${project.version}</version>
+        <version>3.0.4</version>
     </parent>
     <artifactId>fiu-api</artifactId>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.deploy.skip>false</maven.deploy.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
