@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.rupeesense.fi</groupId>
         <artifactId>fiu-service</artifactId>
-        <version>3.0.4</version>
+        <version>${project.version}</version>
     </parent>
     <artifactId>fiu-api</artifactId>
 
