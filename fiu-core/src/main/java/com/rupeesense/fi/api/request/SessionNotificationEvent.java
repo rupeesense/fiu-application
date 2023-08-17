@@ -5,20 +5,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rupeesense.fi.ext.commons.FIDataRange;
 import com.rupeesense.fi.model.aa.SessionStatus;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+@Data
 @NoArgsConstructor
-@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SessionNotificationEvent extends NotificationEvent {
 
+  @NotBlank
   @JsonProperty("dataSessionId")
   private String dataSessionId;
 
+  @Valid
+  @NotNull
   @JsonProperty("data")
   private SessionNotificationEventData data;
 
@@ -31,33 +37,36 @@ public class SessionNotificationEvent extends NotificationEvent {
     this.data = data;
   }
 
-  @Setter
+  @Data
   @NoArgsConstructor
-  @Getter
   @AllArgsConstructor
   @JsonIgnoreProperties(ignoreUnknown = true)
   public static class SessionNotificationEventData {
 
+    @NotNull
     @JsonProperty("status")
     private SessionStatus status;
 
+    @NotNull
     @JsonProperty("DataRange")
     private FIDataRange fiDataRange;
 
+    @NotNull
     @JsonProperty("fips")
     private List<Fip> fips;
   }
 
 
-  @Setter
+  @Data
   @NoArgsConstructor
-  @Getter
   @AllArgsConstructor
   public static class Account {
 
+    @NotBlank
     @JsonProperty("linkRefNumber")
     private String linkRefNumber;
 
+    @NotNull
     @JsonProperty("FIStatus")
     private FIStatus FIStatus;
 
@@ -65,16 +74,16 @@ public class SessionNotificationEvent extends NotificationEvent {
     private String description;
   }
 
-
-  @Setter
+  @Data
   @NoArgsConstructor
-  @Getter
   @AllArgsConstructor
   public static class Fip {
 
+    @NotNull
     @JsonProperty("Accounts")
     private List<Account> accounts;
 
+    @NotBlank
     @JsonProperty("fipID")
     private String fipID;
   }
