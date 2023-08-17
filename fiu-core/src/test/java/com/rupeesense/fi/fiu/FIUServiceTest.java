@@ -1,7 +1,6 @@
 package com.rupeesense.fi.fiu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rupeesense.fi.aa.AccountAggregatorOrchestratorService;
 import com.rupeesense.fi.ext.setu.SetuFIUService;
 import com.rupeesense.fi.ext.setu.request.SetuRequestGenerator;
 import com.rupeesense.fi.repo.RepositoryFacade;
@@ -22,7 +21,6 @@ public class FIUServiceTest {
   @Mock
   private SetuFIUService setuFIUService;
 
-  private AccountAggregatorOrchestratorService accountAggregatorOrchestratorService;
 
   private FIUService fiuService;
 

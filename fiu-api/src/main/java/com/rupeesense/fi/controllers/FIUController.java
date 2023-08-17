@@ -1,6 +1,6 @@
 package com.rupeesense.fi.controllers;
 
-import static com.rupeesense.fi.APIConstants.AA_CONSENT_NOTIFICATION;
+import static com.rupeesense.fi.APIConstants.AA_NOTIFICATION;
 import static com.rupeesense.fi.APIConstants.FIU_CONSENT_CREATE;
 import static com.rupeesense.fi.APIConstants.FIU_DATA_REQUEST_CREATE;
 
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller to act as an FIU
  */
 @RestController
-@RequestMapping
+@RequestMapping(path = "/v1/fiu")
 public class FIUController {
 
   private final FIUService fiuService;
@@ -44,7 +44,7 @@ public class FIUController {
   }
 
   @Transactional
-  @PostMapping(path = AA_CONSENT_NOTIFICATION,
+  @PostMapping(path = AA_NOTIFICATION,
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public void receiveNotification(@RequestBody @Valid NotificationEvent notificationEvent) {
