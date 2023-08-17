@@ -10,3 +10,5 @@ data:
     spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
     spring.jpa.hibernate.ddl-auto=update
     app.fiu.fiu-id=setu-fiu-id
+    management.endpoints.web.exposure.include=health, prometheus
+    management.endpoint.prometheus.enabled=true
