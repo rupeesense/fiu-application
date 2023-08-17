@@ -1,14 +1,14 @@
 package com.rupeesense.fi.ext.setu.request;
 
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.ALL_CONSENT_TYPES;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.CONSENT_EXPIRY_DURATION;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.DATA_FILTER_TRANSACTION_AMOUNT_GREATER_THAN_1;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.DATA_LIFE_3_YEARS;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.FREQUENCY_TWICE_IN_AN_HOUR;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.PERIODIC_FETCH_TYPE;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.PURPOSE_102;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.STORE_CONSENT_MODE;
-import static com.rupeesense.fi.ext.onemoney.OneMoneyRequestGenerator.SUPPORTED_FI_TYPES;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.ALL_CONSENT_TYPES;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.CONSENT_EXPIRY_DURATION;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.DATA_FILTER_TRANSACTION_AMOUNT_GREATER_THAN_1;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.DATA_LIFE_3_YEARS;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.FREQUENCY_TWICE_IN_AN_HOUR;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.PERIODIC_FETCH_TYPE;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.PURPOSE_102;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.STORE_CONSENT_MODE;
+import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.SUPPORTED_FI_TYPES;
 
 import com.rupeesense.fi.FIUServiceConfig;
 import com.rupeesense.fi.ext.ConsentDetail;
