@@ -6,7 +6,7 @@ resources:
   - service.yaml
   - configMap.yaml
   - secret.yaml
+  - serviceAccount.yaml
 
 commonLabels:
     app: fiu-application
-

@@ -12,6 +12,7 @@ spec:
       labels:
         app: fiu-application
     spec:
+      serviceAccountName: fiu-application-service-account
       containers:
         - name: fiu-service
           image: ghcr.io/rupeesense/fiu-application:main
