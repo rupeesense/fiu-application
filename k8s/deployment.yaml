@@ -15,6 +15,7 @@ spec:
       containers:
         - name: fiu-service
           image: ghcr.io/rupeesense/fiu-application:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           args:
@@ -22,13 +23,18 @@ spec:
             - "-jar"
             - "fiu-application.jar"
             - "com.rupeesense.fi.FIUServiceApplication"
-            - "--spring.config.location=/config/application.properties"
+            - "--spring.config.location=/config/application.properties, /secrets/app-secrets.properties"
           volumeMounts:
             - name: config-volume
               mountPath: /config
+            - name: app-secret-mount
+              mountPath: /secrets
       imagePullSecrets:
         - name: ghcr-creds
       volumes:
         - name: config-volume
           configMap:
             name: fiu-application-config
+        - name: app-secret-mount
+          secret:
+            secretName: fiu-application-secret
