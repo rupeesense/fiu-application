@@ -3,6 +3,7 @@ package com.rupeesense.fi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.ChannelOption;
 import java.time.Duration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -14,8 +15,9 @@ public class CoreModule {
 
   public static final String SETU_CLIENT_NAME = "setu-web-client";
 
+  @Autowired
   @Bean(name = SETU_CLIENT_NAME)
-  public WebClient getSetuClient() {
+  public WebClient getSetuClient(FIUServiceConfig fiuServiceConfig) {
     HttpClient client = HttpClient.create()
         .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
         .responseTimeout(Duration.ofSeconds(12));
@@ -23,10 +25,10 @@ public class CoreModule {
     return WebClient
         .builder()
         .clientConnector(new ReactorClientHttpConnector(client))
-        .baseUrl("https://fiu-uat.setu.co")
+        .baseUrl(fiuServiceConfig.getSetuURI())
         .defaultHeader("Content-Type", "application/json")
-        .defaultHeader("x-client-id", "f26b25b8-8e33-4c86-a28e-4575ddeeb09a")
-        .defaultHeader("x-client-secret", "02325c82-505e-4b62-9135-0325f25f4dfd")
+        .defaultHeader("x-client-id", fiuServiceConfig.getSetuClientId())
+        .defaultHeader("x-client-secret", fiuServiceConfig.getSetuClientSecret())
         .build();
   }
 
