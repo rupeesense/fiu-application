@@ -1,8 +1,5 @@
 package com.rupeesense.fi.model.aa;
 
-import com.rupeesense.fi.model.aa.AAIdentifier;
-import com.rupeesense.fi.model.aa.Consent;
-import com.rupeesense.fi.model.aa.SessionStatus;
 import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
