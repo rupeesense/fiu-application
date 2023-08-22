@@ -17,3 +17,16 @@ data:
     app.fiu.setu-client-secret=${sm://setu-client-secret}
     management.endpoints.web.exposure.include=health, prometheus
     management.endpoint.prometheus.enabled=true
+    logging.level.root=INFO
+    logging.level.com.rupeesense.fi=DEBUG
+    logging.level.org.zalando.logbook=TRACE
+    
+    # Exclude actuator endpoints from being logged
+    logbook.exclude=/actuator/**
+    logbook.format.style=http
+    logbook.filter.enabled=true
+    logbook.secure-filter.enabled=true
+    
+    # Obfuscate specific headers and parameters
+    logbook.obfuscate.headers=Authorization
+    logbook.obfuscate.parameters=access_token,refresh_token

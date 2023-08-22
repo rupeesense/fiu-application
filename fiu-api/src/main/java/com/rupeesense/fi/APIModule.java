@@ -15,7 +15,7 @@ public class APIModule {
     FilterRegistrationBean<RequestAuthFilter> registrationBean = new FilterRegistrationBean<>();
 
     registrationBean.setFilter(new RequestAuthFilter());
-    registrationBean.addUrlPatterns("/v1/fiu"); // Set the URL pattern here; /* would mean all endpoints
+    registrationBean.addUrlPatterns("/v1/fiu/*"); // Set the URL pattern here; /* would mean all endpoints
 
     return registrationBean;
   }
