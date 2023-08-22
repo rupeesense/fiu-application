@@ -19,4 +19,6 @@ public class ConsentResponse {
 
     private ConsentStatus status;
 
+    private String redirectUrl;
+
 }
