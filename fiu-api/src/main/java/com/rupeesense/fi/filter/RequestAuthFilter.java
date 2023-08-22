@@ -49,6 +49,7 @@ public class RequestAuthFilter implements Filter {
     }
 
     try {
+      idToken = idToken.replace("Bearer ", "");
       FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
       String uid = decodedToken.getUid();
       // You can now use the uid to identify the user in your system
