@@ -59,7 +59,7 @@ public class FIUControllerTest {
     //create a dummy object of ConsentRequest with using allArgsconstructor
     ConsentRequest request = new ConsentRequest("userVpa", AAIdentifier.ONEMONEY);
     //create a dummy object of ConsentResponse with using allArgsconstructor
-    ConsentResponse response = new ConsentResponse("userVpa", AAIdentifier.ONEMONEY, "requestId", ConsentStatus.PENDING);
+    ConsentResponse response = new ConsentResponse("userVpa", AAIdentifier.ONEMONEY, "requestId", ConsentStatus.PENDING, "url");
     when(fiuService.createConsent(any(ConsentRequest.class))).thenReturn(response);
 
     mockMvc.perform(post("/v1/fiu" + FIU_CONSENT_CREATE)
