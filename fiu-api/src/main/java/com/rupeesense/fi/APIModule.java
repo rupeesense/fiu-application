@@ -1,6 +1,7 @@
 package com.rupeesense.fi;
 
 import com.rupeesense.fi.filter.RequestAuthFilter;
+import io.netty.channel.ChannelHandler.Sharable;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ public class APIModule {
     FilterRegistrationBean<RequestAuthFilter> registrationBean = new FilterRegistrationBean<>();
 
     registrationBean.setFilter(new RequestAuthFilter());
-    registrationBean.addUrlPatterns("/v1/fiu/*"); // Set the URL pattern here; /* would mean all endpoints
+    registrationBean.addUrlPatterns("/v1/fiu/consent/initiate"); // Set the URL pattern here; /* would mean all endpoints
 
     return registrationBean;
   }
@@ -25,6 +26,7 @@ public class APIModule {
     return Logbook.builder()
         .build();
   }
+
   @Bean
   public LogbookClientHandler logbookClientHandler() {
     return new LogbookClientHandler(logbook());

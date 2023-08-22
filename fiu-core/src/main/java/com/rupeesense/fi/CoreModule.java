@@ -21,9 +21,9 @@ public class CoreModule {
   public WebClient getSetuClient(FIUServiceConfig fiuServiceConfig,
       LogbookClientHandler logbookClientHandler) {
     HttpClient client = HttpClient.create()
-        .doOnConnected(
-            (connection -> connection.addHandlerLast(logbookClientHandler))
-        )
+//        .doOnConnected(
+//            (connection -> connection.addHandlerLast(logbookClientHandler))
+//        )
         .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
         .responseTimeout(Duration.ofSeconds(12));
 
