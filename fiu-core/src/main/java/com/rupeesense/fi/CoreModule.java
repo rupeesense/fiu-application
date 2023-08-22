@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.zalando.logbook.netty.LogbookClientHandler;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
@@ -17,8 +18,12 @@ public class CoreModule {
 
   @Autowired
   @Bean(name = SETU_CLIENT_NAME)
-  public WebClient getSetuClient(FIUServiceConfig fiuServiceConfig) {
+  public WebClient getSetuClient(FIUServiceConfig fiuServiceConfig,
+      LogbookClientHandler logbookClientHandler) {
     HttpClient client = HttpClient.create()
+        .doOnConnected(
+            (connection -> connection.addHandlerLast(logbookClientHandler))
+        )
         .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
         .responseTimeout(Duration.ofSeconds(12));
 

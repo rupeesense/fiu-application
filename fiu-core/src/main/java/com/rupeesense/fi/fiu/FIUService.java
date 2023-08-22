@@ -31,10 +31,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Component
 public class FIUService {
 
@@ -60,12 +62,9 @@ public class FIUService {
 
   public ConsentResponse createConsent(ConsentRequest consentRequest) {
     SetuConsentAPIRequest consentAPIRequest = setuRequestGenerator.generateConsentRequest(consentRequest.getUserVpa());
-    try {
-      System.out.println(objectMapper.writeValueAsString(consentAPIRequest));
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    log.debug("consent API Request: {}", consentAPIRequest);
     SetuConsentInitiateResponse consentAPIResponse = setuFIUService.initiateConsent(consentAPIRequest);
+    log.debug("consent API Response: {}", consentAPIResponse);
     Consent consent = new Consent();
     consent.setConsentId(consentAPIResponse.getId());
     consent.setConsentArtifact(writeValueAsStringSilently(objectMapper, consentAPIRequest.getConsentDetail()));
@@ -74,7 +73,7 @@ public class FIUService {
     consent.setUserId(consentRequest.getUserVpa());
     repositoryFacade.save(consent);
     return new ConsentResponse(consent.getUserId(), consent.getAccountAggregator(),
-        consent.getConsentId(), consent.getStatus());
+        consent.getConsentId(), consent.getStatus(), consentAPIResponse.getUrl());
   }
 
 
