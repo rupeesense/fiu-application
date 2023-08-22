@@ -65,7 +65,8 @@ public class SetuRequestGenerator {
         .fiTypes(SUPPORTED_FI_TYPES)
         .build();
 
-    return new SetuConsentAPIRequest("", new ArrayList<>(), consentDetail);
+    //TODO: Localhost not right
+    return new SetuConsentAPIRequest("localhost:5002", new ArrayList<>(), consentDetail);
   }
 
 }
