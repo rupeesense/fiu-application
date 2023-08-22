@@ -39,7 +39,7 @@ public class RepositoryFacade {
   }
 
   public List<Transaction> getTransactionsForAccountAndUser(String accountId, String userId) {
-    return transactionRepository.getTransactionByAccountIdAndUserId(accountId, userId);
+    return transactionRepository.getTransactionByAccountAndUserId(accountId, userId);
   }
 
 

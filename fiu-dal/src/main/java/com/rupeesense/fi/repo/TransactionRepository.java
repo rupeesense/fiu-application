@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
 
-  List<Transaction> getTransactionByAccountIdAndUserId(String accountId, String userId);
+  List<Transaction> getTransactionByAccountAndUserId(String accountId, String userId);
 
 }

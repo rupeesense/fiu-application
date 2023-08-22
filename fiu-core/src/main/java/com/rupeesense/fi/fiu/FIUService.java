@@ -174,9 +174,9 @@ public class FIUService {
         repositoryFacade.saveAccount(account);
         // Create and fill transaction details
         Set<Transaction> transactions = new HashSet<>();
-        if (StringUtils.hasLength(account.getAccountId())) {
-          transactions.addAll(repositoryFacade.getTransactionsForAccountAndUser(account.getAccountId(), session.getUserId()));
-        }
+//        if (StringUtils.hasLength(account.getAccountId())) {
+//          transactions.addAll(repositoryFacade.getTransactionsForAccountAndUser(account.getAccountId(), session.getUserId()));
+//        }
         for (SetuDataResponse.Transactions.Transaction transactionData : accountData.getTransactions().getTransaction()) {
           Transaction transaction = new Transaction();
           transaction.setAccount(account);
