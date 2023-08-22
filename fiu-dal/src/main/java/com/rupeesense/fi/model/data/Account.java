@@ -1,6 +1,7 @@
 package com.rupeesense.fi.model.data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -80,7 +81,7 @@ public class Account {
   private Holding holding;
 
   @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  private Set<AccountHolder> holders;
+  private Set<AccountHolder> holders = new HashSet<>();
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
