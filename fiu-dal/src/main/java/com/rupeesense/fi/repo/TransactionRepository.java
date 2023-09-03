@@ -9,4 +9,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, String
 
   List<Transaction> getTransactionByAccountAndUserId(String accountId, String userId);
 
+
+  List<Transaction> getTransactionsByNarrationLikeIgnoreCase(String narrationPattern);
+
+  default List<Transaction> getTransactionsByNarrationLike(String narration) {
+    String narrationPattern = "%" + narration + "%";
+    return getTransactionsByNarrationLikeIgnoreCase(narrationPattern);
+  }
+
 }

@@ -3,7 +3,6 @@ package com.rupeesense.fi.ext;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rupeesense.fi.ext.commons.FIDataRange;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -150,5 +149,15 @@ public class ConsentDetail {
 
     @JsonProperty("value")
     private String value;
+  }
+
+  @NoArgsConstructor
+  @Setter
+  @Getter
+  @AllArgsConstructor
+  public static class Customer {
+
+    @JsonProperty("id")
+    private String id;
   }
 }
