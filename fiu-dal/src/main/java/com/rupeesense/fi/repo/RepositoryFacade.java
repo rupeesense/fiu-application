@@ -3,6 +3,7 @@ package com.rupeesense.fi.repo;
 import com.rupeesense.fi.model.aa.Consent;
 import com.rupeesense.fi.model.aa.ConsentStatus;
 import com.rupeesense.fi.model.aa.Session;
+import com.rupeesense.fi.model.aa.SessionStatus;
 import com.rupeesense.fi.model.data.Account;
 import com.rupeesense.fi.model.data.Transaction;
 import java.util.List;
@@ -69,5 +70,13 @@ public class RepositoryFacade {
 
   public void saveTransactions(Set<Transaction> transactions) {
     transactionRepository.saveAll(transactions);
+  }
+
+  public Set<Session> getPendingAndPartialSessionsByConsentId(String consentId) {
+    return sessionRepository.findByConsentIdAndStatusIn(consentId, Set.of(SessionStatus.PENDING, SessionStatus.PARTIAL));
+  }
+
+  public Session getLatestSessionByConsentId(String consentId) {
+    return sessionRepository.findFirstByConsentIdOrderByCreatedAtDesc(consentId);
   }
 }

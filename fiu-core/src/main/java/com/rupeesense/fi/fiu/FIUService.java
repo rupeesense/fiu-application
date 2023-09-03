@@ -17,6 +17,7 @@ import com.rupeesense.fi.ext.setu.response.SetuDataResponse;
 import com.rupeesense.fi.ext.setu.response.SetuSessionResponse;
 import com.rupeesense.fi.model.aa.AAIdentifier;
 import com.rupeesense.fi.model.aa.Consent;
+import com.rupeesense.fi.model.aa.Consent.DataFrequencyUnit;
 import com.rupeesense.fi.model.aa.ConsentStatus;
 import com.rupeesense.fi.model.aa.Session;
 import com.rupeesense.fi.model.aa.SessionStatus;
@@ -38,7 +39,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FIUService {
 
-  private final RepositoryFacade repositoryFacade;
+  private final RepositoryFacade repository;
 
   private final SetuFIUService setuFIUService;
 
@@ -47,11 +48,11 @@ public class FIUService {
   private final SetuRequestGenerator setuRequestGenerator;
 
   @Autowired
-  public FIUService(RepositoryFacade repositoryFacade,
+  public FIUService(RepositoryFacade repository,
       SetuFIUService setuFIUService,
       ObjectMapper objectMapper,
       SetuRequestGenerator setuRequestGenerator) {
-    this.repositoryFacade = repositoryFacade;
+    this.repository = repository;
     this.setuFIUService = setuFIUService;
     this.objectMapper = objectMapper;
     this.setuRequestGenerator = setuRequestGenerator;
@@ -68,8 +69,10 @@ public class FIUService {
     consent.setConsentArtifact(writeValueAsStringSilently(objectMapper, consentAPIRequest.getConsentDetail()));
     consent.setAccountAggregator(AAIdentifier.ONEMONEY);
     consent.setStatus(consentAPIResponse.getStatus());
+    consent.setDataFetchFreqUnit(DataFrequencyUnit.valueOf(consentAPIRequest.getConsentDetail().getFrequency().getUnit()));
+    consent.setDataFetchFreqValue(consentAPIRequest.getConsentDetail().getFrequency().getValue());
     consent.setUserId(consentRequest.getUserVpa());
-    repositoryFacade.save(consent);
+    repository.save(consent);
     log.debug("Consent saved to database: {}", consent);
     return new ConsentResponse(consent.getUserId(), consent.getAccountAggregator(),
         consent.getConsentId(), consent.getStatus(), consentAPIResponse.getUrl());
@@ -77,11 +80,31 @@ public class FIUService {
 
 
   public Session createDataRequest(DataRequest dataRequest) {
-    Consent consent = repositoryFacade.findActiveConsentByUserId(dataRequest.getUserVpa());
+    Consent consent = repository.findActiveConsentByUserId(dataRequest.getUserVpa());
     if (consent == null) {
       log.error("No active consent found for the given user id: {}", dataRequest.getUserVpa());
       throw new IllegalArgumentException("No active consent found for the given user id: " + dataRequest.getUserVpa());
     }
+
+    //get non-fulfilled sessions attached to this consent
+    Set<Session> sessions = repository.getPendingAndPartialSessionsByConsentId(consent.getConsentId());
+    if (sessions.size() > 0) {
+      log.error("There are already non-fulfilled {} sessions attached to this consent: {}", sessions.size(), consent.getConsentId());
+      throw new IllegalArgumentException("There are already " + sessions.size() + " sessions attached to this consent: " + consent.getConsentId());
+    }
+
+    //check if data-request violates consent frequency
+    //get latest session attached to this consent
+    Session latestSession = repository.getLatestSessionByConsentId(consent.getConsentId());
+    if (latestSession != null) {
+      LocalDateTime nextDataFetchTime = latestSession.getCreatedAt()
+          .plus(consent.getDataFetchFreqValue(), consent.getDataFetchFreqUnit().getChronoUnit());
+      if (nextDataFetchTime.isAfter(LocalDateTime.now())) {
+        log.error("Data request violates consent frequency. Next data fetch time: {}", nextDataFetchTime);
+        throw new IllegalArgumentException("Data request violates consent frequency. Next data fetch time: " + nextDataFetchTime);
+      }
+    }
+
     SetuDataRequest setuDataRequest = setuRequestGenerator.generateDataRequest(consent.getConsentId(), dataRequest.getFrom(), dataRequest.getTo());
     log.debug("calling setu api to create data request with request: {}", setuDataRequest);
     SetuSessionResponse response = setuFIUService.createDataRequest(setuDataRequest);
@@ -92,14 +115,14 @@ public class FIUService {
     session.setAccountAggregator(consent.getAccountAggregator());
     session.setStatus(response.getStatus());
     session.setUserId(dataRequest.getUserVpa());
-    repositoryFacade.save(session);
+    repository.save(session);
     log.debug("Session saved to database: {}", session);
     return session;
   }
 
   public void receiveSessionNotification(SessionNotificationEvent sessionNotificationEvent) {
     log.debug("Received session notification: {}", sessionNotificationEvent);
-    Session session = repositoryFacade.getSession(sessionNotificationEvent.getDataSessionId());
+    Session session = repository.getSession(sessionNotificationEvent.getDataSessionId());
     if (session == null) {
       log.error("No session found for the given session id: {}", sessionNotificationEvent.getDataSessionId());
       throw new IllegalArgumentException("No session found for the given session id: " + sessionNotificationEvent.getDataSessionId());
@@ -127,7 +150,7 @@ public class FIUService {
       default:
         throw new IllegalArgumentException("Invalid session status: " + sessionNotificationEvent.getData().getStatus());
     }
-    repositoryFacade.save(session);
+    repository.save(session);
   }
 
   public void saveData(SetuDataResponse setuDataResponse, String userId) {
@@ -136,7 +159,7 @@ public class FIUService {
       // For each account-level data
       for (SetuDataResponse.AccountLevelData accountLevelData : dataPayload.getData()) {
         // Create account object
-        Account account = repositoryFacade.getAccountIfItExists(dataPayload.getFipId(), userId, accountLevelData.getLinkRefNumber())
+        Account account = repository.getAccountIfItExists(dataPayload.getFipId(), userId, accountLevelData.getLinkRefNumber())
             .orElseGet(Account::new);
 
         account.setFipID(dataPayload.getFipId());
@@ -177,7 +200,7 @@ public class FIUService {
         }
         account.getHolders().addAll(holders);
 
-        repositoryFacade.saveAccount(account);
+        repository.saveAccount(account);
         // TODO: Create and fill transaction details
         Set<Transaction> transactions = new HashSet<>();
         //TODO: eliminate the duplicate transactions
@@ -200,7 +223,7 @@ public class FIUService {
           transaction.setFipID(account.getFipID());
           transactions.add(transaction);
         }
-        repositoryFacade.saveTransactions(transactions);
+        repository.saveTransactions(transactions);
       }
     }
   }
@@ -208,7 +231,7 @@ public class FIUService {
 
   public void updateConsent(ConsentNotificationEvent notificationEvent) {
     log.info("Received consent notification: {}", notificationEvent);
-    Consent consent = repositoryFacade.findByConsentId(notificationEvent.getConsentId());
+    Consent consent = repository.findByConsentId(notificationEvent.getConsentId());
     if (consent == null) {
       log.error("No consent found for the given consent id: {}", notificationEvent.getConsentId());
       throw new IllegalArgumentException("No consent found for the given consent id: "
@@ -245,6 +268,6 @@ public class FIUService {
         log.debug("Consent revoked: {}", consent);
         break;
     }
-    repositoryFacade.save(consent);
+    repository.save(consent);
   }
 }
