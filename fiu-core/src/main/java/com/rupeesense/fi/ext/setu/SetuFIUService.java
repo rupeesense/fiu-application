@@ -4,8 +4,6 @@ import static com.rupeesense.fi.CoreModule.SETU_CLIENT_NAME;
 
 import com.rupeesense.fi.aa.exception.AAClientException;
 import com.rupeesense.fi.aa.exception.AAServerException;
-import com.rupeesense.fi.ext.onemoney.request.FIDataRequest;
-import com.rupeesense.fi.ext.onemoney.response.OneMoneyRequestDataAPIResponse;
 import com.rupeesense.fi.ext.setu.request.SetuConsentAPIRequest;
 import com.rupeesense.fi.ext.setu.request.SetuDataRequest;
 import com.rupeesense.fi.ext.setu.response.SetuConsentInitiateResponse;
@@ -57,16 +55,6 @@ public class SetuFIUService {
         .retrieve()
         .onStatus(HttpStatus::isError, this::createException)
         .bodyToMono(SetuDataResponse.class)
-        .block();
-  }
-
-  public OneMoneyRequestDataAPIResponse placeDataRequest(FIDataRequest dataRequest) {
-    return webClient.post()
-        .uri("/aa/FI/request")
-        .bodyValue(dataRequest)
-        .retrieve()
-        .onStatus(HttpStatus::isError, this::createException)
-        .bodyToMono(OneMoneyRequestDataAPIResponse.class)
         .block();
   }
 

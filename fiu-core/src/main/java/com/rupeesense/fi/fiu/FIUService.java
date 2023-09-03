@@ -1,8 +1,7 @@
 package com.rupeesense.fi.fiu;
 
-import static com.rupeesense.fi.ext.onemoney.OneMoneyUtils.writeValueAsStringSilently;
+import static com.rupeesense.fi.ext.Utils.writeValueAsStringSilently;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rupeesense.fi.api.request.ConsentNotificationEvent;
 import com.rupeesense.fi.api.request.ConsentRequest;
@@ -34,7 +33,6 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @Component
@@ -72,6 +70,7 @@ public class FIUService {
     consent.setStatus(consentAPIResponse.getStatus());
     consent.setUserId(consentRequest.getUserVpa());
     repositoryFacade.save(consent);
+    log.debug( "Consent saved: {}", consent);
     return new ConsentResponse(consent.getUserId(), consent.getAccountAggregator(),
         consent.getConsentId(), consent.getStatus(), consentAPIResponse.getUrl());
   }
