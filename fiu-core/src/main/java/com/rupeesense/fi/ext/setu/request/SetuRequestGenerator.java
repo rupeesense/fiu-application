@@ -12,9 +12,9 @@ import static com.rupeesense.fi.ext.commons.ConsentRequestDefaults.SUPPORTED_FI_
 
 import com.rupeesense.fi.FIUServiceConfig;
 import com.rupeesense.fi.ext.ConsentDetail;
+import com.rupeesense.fi.ext.ConsentDetail.Customer;
 import com.rupeesense.fi.ext.ConsentDetail.DataConsumer;
 import com.rupeesense.fi.ext.commons.FIDataRange;
-import com.rupeesense.fi.ext.onemoney.request.OneMoneyRequest.Customer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
