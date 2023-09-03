@@ -172,8 +172,9 @@ public class FIUService {
         account.getHolders().addAll(holders);
 
         repositoryFacade.saveAccount(account);
-        // Create and fill transaction details
+        // TODO: Create and fill transaction details
         Set<Transaction> transactions = new HashSet<>();
+        //TODO: eliminate the duplicate transactions
 //        if (StringUtils.hasLength(account.getAccountId())) {
 //          transactions.addAll(repositoryFacade.getTransactionsForAccountAndUser(account.getAccountId(), session.getUserId()));
 //        }
