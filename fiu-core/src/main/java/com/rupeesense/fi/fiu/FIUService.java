@@ -60,9 +60,9 @@ public class FIUService {
 
   public ConsentResponse createConsent(ConsentRequest consentRequest) {
     SetuConsentAPIRequest consentAPIRequest = setuRequestGenerator.generateConsentRequest(consentRequest.getUserVpa());
-    log.debug("consent API Request: {}", consentAPIRequest);
+    log.debug("calling setu api to create consent with request: {}", consentAPIRequest);
     SetuConsentInitiateResponse consentAPIResponse = setuFIUService.initiateConsent(consentAPIRequest);
-    log.debug("consent API Response: {}", consentAPIResponse);
+    log.debug("consent API Response from Setu: {}", consentAPIResponse);
     Consent consent = new Consent();
     consent.setConsentId(consentAPIResponse.getId());
     consent.setConsentArtifact(writeValueAsStringSilently(objectMapper, consentAPIRequest.getConsentDetail()));
@@ -70,7 +70,7 @@ public class FIUService {
     consent.setStatus(consentAPIResponse.getStatus());
     consent.setUserId(consentRequest.getUserVpa());
     repositoryFacade.save(consent);
-    log.debug( "Consent saved: {}", consent);
+    log.debug("Consent saved to database: {}", consent);
     return new ConsentResponse(consent.getUserId(), consent.getAccountAggregator(),
         consent.getConsentId(), consent.getStatus(), consentAPIResponse.getUrl());
   }
@@ -79,9 +79,11 @@ public class FIUService {
   public Session createDataRequest(DataRequest dataRequest) {
     Consent consent = repositoryFacade.findActiveConsentByUserId(dataRequest.getUserVpa());
     if (consent == null) {
+      log.error("No active consent found for the given user id: {}", dataRequest.getUserVpa());
       throw new IllegalArgumentException("No active consent found for the given user id: " + dataRequest.getUserVpa());
     }
     SetuDataRequest setuDataRequest = setuRequestGenerator.generateDataRequest(consent.getConsentId(), dataRequest.getFrom(), dataRequest.getTo());
+    log.debug("calling setu api to create data request with request: {}", setuDataRequest);
     SetuSessionResponse response = setuFIUService.createDataRequest(setuDataRequest);
     Session session = new Session();
     session.setSessionId(response.getId());
@@ -91,25 +93,31 @@ public class FIUService {
     session.setStatus(response.getStatus());
     session.setUserId(dataRequest.getUserVpa());
     repositoryFacade.save(session);
+    log.debug("Session saved to database: {}", session);
     return session;
   }
 
   public void receiveSessionNotification(SessionNotificationEvent sessionNotificationEvent) {
+    log.debug("Received session notification: {}", sessionNotificationEvent);
     Session session = repositoryFacade.getSession(sessionNotificationEvent.getDataSessionId());
     if (session == null) {
+      log.error("No session found for the given session id: {}", sessionNotificationEvent.getDataSessionId());
       throw new IllegalArgumentException("No session found for the given session id: " + sessionNotificationEvent.getDataSessionId());
     }
     switch (sessionNotificationEvent.getData().getStatus()) {
       case COMPLETED:
-        //fetch and save all data
-        getAndSaveData(session);
+        SetuDataResponse setuDataResponse = setuFIUService.getData(session.getSessionId());
+        saveData(setuDataResponse, session.getUserId());
         session.setStatus(SessionStatus.COMPLETED);
+        log.debug("Session data fetch completed: {}", session.getId());
         break;
       case FAILED:
         session.setStatus(SessionStatus.FAILED);
+        log.debug("Session failed: {}", session.getId());
         break;
       case EXPIRED:
         session.setStatus(SessionStatus.EXPIRED);
+        log.debug("Session expired: {}", session.getId());
         break;
       case PARTIAL:
         //fetch partial data
@@ -122,14 +130,13 @@ public class FIUService {
     repositoryFacade.save(session);
   }
 
-  public void getAndSaveData(Session session) {
-    SetuDataResponse setuDataResponse = setuFIUService.getData(session.getSessionId());
+  public void saveData(SetuDataResponse setuDataResponse, String userId) {
     // Iterate through each data payload
     for (SetuDataResponse.DataPayload dataPayload : setuDataResponse.getDataPayload()) {
       // For each account-level data
       for (SetuDataResponse.AccountLevelData accountLevelData : dataPayload.getData()) {
         // Create account object
-        Account account = repositoryFacade.getAccountIfItExists(dataPayload.getFipId(), session.getUserId(), accountLevelData.getLinkRefNumber())
+        Account account = repositoryFacade.getAccountIfItExists(dataPayload.getFipId(), userId, accountLevelData.getLinkRefNumber())
             .orElseGet(Account::new);
 
         account.setFipID(dataPayload.getFipId());
@@ -152,7 +159,7 @@ public class FIUService {
         account.setHolding(Account.Holding.valueOf(accountData.getProfile().getHolders().getType()));
         account.setType(Account.AccountType.valueOf(accountData.getType().toUpperCase()));
         account.setTxnRefreshedAt(LocalDateTime.now());
-        account.setUserId(session.getUserId());
+        account.setUserId(userId);
         // Create and fill holder details
         Set<AccountHolder> holders = new HashSet<>();
         for (SetuDataResponse.Profile.Holder holderData : accountData.getProfile().getHolders().getHolder()) {
@@ -175,7 +182,7 @@ public class FIUService {
         Set<Transaction> transactions = new HashSet<>();
         //TODO: eliminate the duplicate transactions
 //        if (StringUtils.hasLength(account.getAccountId())) {
-//          transactions.addAll(repositoryFacade.getTransactionsForAccountAndUser(account.getAccountId(), session.getUserId()));
+//          transactions.addAll(repositoryFacade.getTransactionsForAccountAndUser(account.getAccountId(), userId));
 //        }
         for (SetuDataResponse.Transactions.Transaction transactionData : accountData.getTransactions().getTransaction()) {
           Transaction transaction = new Transaction();
@@ -183,14 +190,13 @@ public class FIUService {
           transaction.setFipTransactionId(transactionData.getTxnId());
           transaction.setAmount(Float.parseFloat(transactionData.getAmount()));
           transaction.setNarration(transactionData.getNarration());
-          // Assuming TransactionType and PaymentMethod enums exist in Transaction class
           transaction.setTransactionType(TransactionType.valueOf(transactionData.getType()));
           transaction.setPaymentMethod(PaymentMethod.valueOf(transactionData.getMode()));
           transaction.setCurrentBalance(Float.parseFloat(transactionData.getCurrentBalance()));
           transaction.setTransactionTimeStamp(LocalDateTime.parse(transactionData.getTransactionTimestamp(), formatter));
           transaction.setValueDate(LocalDateTime.parse(transactionData.getValueDate(), formatter));
           transaction.setReferenceNumber(transactionData.getReference());
-          transaction.setUserId(session.getUserId());
+          transaction.setUserId(userId);
           transaction.setFipID(account.getFipID());
           transactions.add(transaction);
         }
@@ -201,8 +207,10 @@ public class FIUService {
 
 
   public void updateConsent(ConsentNotificationEvent notificationEvent) {
+    log.info("Received consent notification: {}", notificationEvent);
     Consent consent = repositoryFacade.findByConsentId(notificationEvent.getConsentId());
     if (consent == null) {
+      log.error("No consent found for the given consent id: {}", notificationEvent.getConsentId());
       throw new IllegalArgumentException("No consent found for the given consent id: "
           + notificationEvent.getConsentId());
     }
@@ -210,24 +218,31 @@ public class FIUService {
     switch (notificationEvent.getData().getStatus()) {
       case ACTIVE:
         consent.setStatus(ConsentStatus.ACTIVE);
+        log.debug("Consent activated: {}", consent);
         break;
       case PAUSED:
         if (consent.getStatus() != ConsentStatus.ACTIVE) {
+          log.error("Consent couldn't be paused as it is not active: {}", consent);
           throw new IllegalArgumentException("Consent can be paused only if it is active");
         }
         consent.setStatus(ConsentStatus.PAUSED);
+        log.debug("Consent paused: {}", consent);
         break;
       case REJECTED:
         consent.setStatus(ConsentStatus.REJECTED);
+        log.debug("Consent rejected: {}", consent);
         break;
       case EXPIRED:
         consent.setStatus(ConsentStatus.EXPIRED);
+        log.debug("Consent expired: {}", consent);
         break;
       case REVOKED:
         if (consent.getStatus() != ConsentStatus.ACTIVE && consent.getStatus() != ConsentStatus.PAUSED) {
+          log.error("Consent couldn't be revoked as it is not active or paused: {}", consent);
           throw new IllegalArgumentException("Consent can be revoked only if it is active or paused");
         }
         consent.setStatus(ConsentStatus.REVOKED);
+        log.debug("Consent revoked: {}", consent);
         break;
     }
     repositoryFacade.save(consent);
