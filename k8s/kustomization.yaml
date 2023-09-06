@@ -5,7 +5,6 @@ resources:
   - deployment.yaml
   - service.yaml
   - configMap.yaml
-  - secret.yaml
   - serviceAccount.yaml
 
 commonLabels:

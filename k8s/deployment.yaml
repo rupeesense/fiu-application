@@ -47,8 +47,8 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /config
-            - mountPath: /secrets-init/bin
-              name: secrets-init-volume
+            - name: secrets-init-volume
+              mountPath: /secrets-init/bin
       imagePullSecrets:
         - name: ghcr-creds
       volumes:
