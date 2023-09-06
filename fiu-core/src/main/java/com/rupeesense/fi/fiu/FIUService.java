@@ -201,14 +201,9 @@ public class FIUService {
         account.getHolders().addAll(holders);
 
         repository.saveAccount(account);
-        // TODO: Create and fill transaction details
         Set<Transaction> transactions = new HashSet<>();
-        //TODO: eliminate the duplicate transactions
-//        if (StringUtils.hasLength(account.getAccountId())) {
-//          transactions.addAll(repositoryFacade.getTransactionsForAccountAndUser(account.getAccountId(), userId));
-//        }
         for (SetuDataResponse.Transactions.Transaction transactionData : accountData.getTransactions().getTransaction()) {
-          Transaction transaction = new Transaction();
+          Transaction transaction = repository.getTransactionsByFipTransactionId(dataPayload.getFipId(), transactionData.getTxnId()).orElseGet(Transaction::new);
           transaction.setAccount(account);
           transaction.setFipTransactionId(transactionData.getTxnId());
           transaction.setAmount(Float.parseFloat(transactionData.getAmount()));
