@@ -47,8 +47,6 @@ spec:
           volumeMounts:
             - name: config-volume
               mountPath: /config
-            - name: app-secret-mount
-              mountPath: /secrets
             - mountPath: /secrets-init/bin
               name: secrets-init-volume
       imagePullSecrets:
@@ -59,6 +57,3 @@ spec:
             name: fiu-application-config
         - name: secrets-init-volume
           emptyDir: { }
-        - name: app-secret-mount
-          secret:
-            secretName: fiu-application-secret
