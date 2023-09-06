@@ -41,12 +41,16 @@ spec:
             - "/secrets-init/bin/secrets-init"
           args:
             - "--provider=google"
+            - "sh"
+            - "-ec"
             - "/app/start.sh"
           volumeMounts:
             - name: config-volume
               mountPath: /config
             - name: app-secret-mount
               mountPath: /secrets
+            - mountPath: /secrets-init/bin
+              name: secrets-init-volume
       imagePullSecrets:
         - name: ghcr-creds
       volumes:
