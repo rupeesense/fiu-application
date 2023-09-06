@@ -5,6 +5,6 @@ WORKDIR /app
 
 # Copy the JAR file from the local fiu-api/target directory to the working directory in the Docker image
 COPY fiu-api/target/fiu-api-*.jar /app/fiu-application.jar
-
+COPY scripts/start.sh /app/start.sh
 # Define the command to run the application
-CMD ["java", "-jar", "fiu-application.jar", "com.rupeesense.fi.FIUServiceApplication"]
+CMD ["sh", "/app/start.sh"]
