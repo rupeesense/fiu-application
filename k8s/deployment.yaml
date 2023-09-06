@@ -15,18 +15,33 @@ spec:
       serviceAccountName: fiu-application-service-account
       nodeSelector:
         iam.gke.io/gke-metadata-server-enabled: "true"
+      initContainers:
+        - name: secrets-init
+          image: doitintl/secrets-init:0.3.6
+          command:
+            - sh
+          args:
+            - -c
+            - "cp /usr/local/bin/secrets-init /secrets-init/bin/"
+          volumeMounts:
+            - mountPath: /secrets-init/bin
+              name: secrets-init-volume
       containers:
         - name: fiu-service
+          env:
+            - name: DB_PASSWORD
+              value: gcp:secretmanager:projects/271330748043/secrets/database-password/versions/latest
+            - name: SETU_CLIENT_SECRET
+              value: gcp:secretmanager:projects/271330748043/secrets/setu-client-secret/versions/latest
           image: ghcr.io/rupeesense/fiu-application:main
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          command:
+            - "/secrets-init/bin/secrets-init"
           args:
-            - "java"
-            - "-jar"
-            - "fiu-application.jar"
-            - "com.rupeesense.fi.FIUServiceApplication"
-            - "--spring.config.location=/config/application.properties, /secrets/app-secrets.properties"
+            - "--provider=google"
+            - "/app/start.sh"
           volumeMounts:
             - name: config-volume
               mountPath: /config
@@ -38,6 +53,8 @@ spec:
         - name: config-volume
           configMap:
             name: fiu-application-config
+        - name: secrets-init-volume
+          emptyDir: { }
         - name: app-secret-mount
           secret:
             secretName: fiu-application-secret
