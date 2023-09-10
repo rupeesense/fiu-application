@@ -43,6 +43,10 @@ public class RepositoryFacade {
     return transactionRepository.getTransactionByAccountAndUserId(accountId, userId);
   }
 
+  public Optional<Transaction> getTransactionsByFipTransactionId(String fipId, String fipTxnId) {
+    return transactionRepository.findByFipIDAndFipTransactionId(fipId, fipTxnId);
+  }
+
 
   public Session getSession(String sessionId) {
     return sessionRepository.findBySessionId(sessionId);
