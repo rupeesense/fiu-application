@@ -13,3 +13,8 @@ Service to act as a Financial Information User
 ## Database 
 
 RDS with database name = fiu_store
+
+
+## Deployment
+
+kustomize build k8s | k apply -f -
