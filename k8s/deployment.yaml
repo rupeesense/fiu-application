@@ -30,9 +30,9 @@ spec:
         - name: fiu-service
           env:
             - name: DB_PASSWORD
-              value: gcp:secretmanager:projects/271330748043/secrets/database-password/versions/latest
+              value: gcp:secretmanager:projects/980900648257/secrets/fiu-store-database-password/versions/latest
             - name: SETU_CLIENT_SECRET
-              value: gcp:secretmanager:projects/271330748043/secrets/setu-client-secret/versions/latest
+              value: gcp:secretmanager:projects/980900648257/secrets/setu-client-secret/versions/latest
           image: ghcr.io/rupeesense/fiu-application:main
           imagePullPolicy: Always
           ports:
