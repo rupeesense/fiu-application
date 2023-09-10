@@ -6,7 +6,7 @@ metadata:
     app: fiu-application
 data:
   application.properties: |  # Combine your configurations into one file
-    spring.datasource.url=jdbc:postgresql://172.22.0.3:5432/fiu_datastore?useSSL=false
+    spring.datasource.url=jdbc:postgresql://10.74.0.3:5432/fiu_datastore?useSSL=false
     spring.datasource.username=fiu-application
     spring.datasource.password=${DB_PASSWORD}
     spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
