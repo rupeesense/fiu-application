@@ -6,24 +6,25 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-
+import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 
+@Slf4j
 public class RequestAuthFilter implements Filter {
 
   public RequestAuthFilter() {
     try {
-      FirebaseOptions options = new FirebaseOptions.Builder()
+      FirebaseOptions options = FirebaseOptions.builder()
           .setCredentials(GoogleCredentials.getApplicationDefault())
-          .setProjectId("ascendant-woods-395319")
+          .setProjectId("ardent-firefly-398508")
           .build();
       FirebaseApp.initializeApp(options);
     } catch (IOException e) {
@@ -55,6 +56,7 @@ public class RequestAuthFilter implements Filter {
       // You can now use the uid to identify the user in your system
       chain.doFilter(request, response);
     } catch (FirebaseAuthException e) {
+      log.error("Error while verifying token", e);
       // Token is invalid, respond with an error status or handle as required
       response.getWriter().write("Authentication failed.");
       ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
