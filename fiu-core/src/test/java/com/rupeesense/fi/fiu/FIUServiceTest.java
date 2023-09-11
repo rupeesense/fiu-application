@@ -29,6 +29,174 @@ public class FIUServiceTest {
     MockitoAnnotations.openMocks(this);
     fiuService = new FIUService(repositoryFacade, setuFIUService, objectMapper, setuRequestGenerator);
   }
+  
+  @Test
+  public void testCreateConsent() {
+    // Prepare the input and mocked objects
+    ConsentRequest consentRequest = new ConsentRequest();
+    consentRequest.setUserVpa("userVpa");
+    SetuConsentAPIRequest consentAPIRequest = new SetuConsentAPIRequest();
+    SetuConsentInitiateResponse consentAPIResponse = new SetuConsentInitiateResponse();
+    consentAPIResponse.setId("consentId");
+    consentAPIResponse.setStatus(ConsentStatus.ACTIVE);
+  
+    // Set up the mocked interactions
+    when(setuRequestGenerator.generateConsentRequest(anyString())).thenReturn(consentAPIRequest);
+    when(setuFIUService.initiateConsent(any(SetuConsentAPIRequest.class))).thenReturn(consentAPIResponse);
+  
+    // Call the method under test
+    ConsentResponse consentResponse = fiuService.createConsent(consentRequest);
+  
+    // Assert the expected outcome
+    assertEquals("userVpa", consentResponse.getUserId());
+    assertEquals(AAIdentifier.ONEMONEY, consentResponse.getAccountAggregator());
+    assertEquals("consentId", consentResponse.getConsentId());
+    assertEquals(ConsentStatus.ACTIVE, consentResponse.getStatus());
+  
+    // Verify the interactions
+    verify(setuRequestGenerator).generateConsentRequest(anyString());
+    verify(setuFIUService).initiateConsent(any(SetuConsentAPIRequest.class));
+    verify(repositoryFacade).save(any(Consent.class));
+  }
+  
+  @Test
+  public void testCreateDataRequest() {
+    // Prepare the input and mocked objects
+    DataRequest dataRequest = new DataRequest();
+    dataRequest.setUserVpa("userVpa");
+    Consent consent = new Consent();
+    consent.setConsentId("consentId");
+    consent.setAccountAggregator(AAIdentifier.ONEMONEY);
+    SetuDataRequest setuDataRequest = new SetuDataRequest();
+    SetuSessionResponse response = new SetuSessionResponse();
+    response.setId("sessionId");
+    response.setStatus(SessionStatus.ACTIVE);
+  
+    // Set up the mocked interactions
+    when(repositoryFacade.findActiveConsentByUserId(anyString())).thenReturn(consent);
+    when(setuRequestGenerator.generateDataRequest(anyString(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(setuDataRequest);
+    when(setuFIUService.createDataRequest(any(SetuDataRequest.class))).thenReturn(response);
+  
+    // Call the method under test
+    Session session = fiuService.createDataRequest(dataRequest);
+  
+    // Assert the expected outcome
+    assertEquals("sessionId", session.getSessionId());
+    assertEquals(consent, session.getConsent());
+    assertEquals(AAIdentifier.ONEMONEY, session.getAccountAggregator());
+    assertEquals(SessionStatus.ACTIVE, session.getStatus());
+    assertEquals("userVpa", session.getUserId());
+  
+    // Verify the interactions
+    verify(repositoryFacade).findActiveConsentByUserId(anyString());
+    verify(setuRequestGenerator).generateDataRequest(anyString(), any(LocalDateTime.class), any(LocalDateTime.class));
+    verify(setuFIUService).createDataRequest(any(SetuDataRequest.class));
+    verify(repositoryFacade).save(any(Session.class));
+  }
+  
+  @Test
+  public void testReceiveSessionNotification() {
+    // Prepare the input and mocked objects
+    SessionNotificationEvent sessionNotificationEvent = new SessionNotificationEvent();
+    sessionNotificationEvent.setDataSessionId("sessionId");
+    SessionNotificationEvent.Data data = new SessionNotificationEvent.Data();
+    data.setStatus(SessionStatus.COMPLETED);
+    sessionNotificationEvent.setData(data);
+    Session session = new Session();
+  
+    // Set up the mocked interactions
+    when(repositoryFacade.getSession(anyString())).thenReturn(session);
+  
+    // Call the method under test
+    fiuService.receiveSessionNotification(sessionNotificationEvent);
+  
+    // Assert the expected outcome
+    assertEquals(SessionStatus.COMPLETED, session.getStatus());
+  
+    // Verify the interactions
+    verify(repositoryFacade).getSession(anyString());
+    verify(repositoryFacade).save(any(Session.class));
+  }
+  
+  @Test
+  public void testGetAndSaveData() {
+    // Prepare the input and mocked objects
+    Session session = new Session();
+    session.setSessionId("sessionId");
+    session.setUserId("userVpa");
+    SetuDataResponse setuDataResponse = new SetuDataResponse();
+    List<SetuDataResponse.DataPayload> dataPayloads = new ArrayList<>();
+    SetuDataResponse.DataPayload dataPayload = new SetuDataResponse.DataPayload();
+    dataPayload.setFipId("fipId");
+    List<SetuDataResponse.AccountLevelData> accountLevelDataList = new ArrayList<>();
+    SetuDataResponse.AccountLevelData accountLevelData = new SetuDataResponse.AccountLevelData();
+    accountLevelData.setLinkRefNumber("linkRefNumber");
+    accountLevelData.setMaskedAccNumber("maskedAccNumber");
+    SetuDataResponse.AccountData accountData = new SetuDataResponse.AccountData();
+    SetuDataResponse.Summary summary = new SetuDataResponse.Summary();
+    summary.setBranch("branch");
+    summary.setCurrentODLimit("currentODLimit");
+    summary.setDrawingLimit("drawingLimit");
+    summary.setIfscCode("ifscCode");
+    summary.setMicrCode("micrCode");
+    summary.setCurrency("currency");
+    summary.setCurrentBalance("currentBalance");
+    summary.setOpeningDate("2022-01-01T00:00:00Z");
+    summary.setBalanceDateTime("2022-01-01T00:00:00Z");
+    summary.setStatus("ACTIVE");
+    accountData.setSummary(summary);
+    SetuDataResponse.Profile profile = new SetuDataResponse.Profile();
+    SetuDataResponse.Holders holders = new SetuDataResponse.Holders();
+    holders.setType("type");
+    List<SetuDataResponse.Profile.Holder> holderList = new ArrayList<>();
+    SetuDataResponse.Profile.Holder holder = new SetuDataResponse.Profile.Holder();
+    holder.setAddress("address");
+    holder.setCkycCompliance("ckycCompliance");
+    holder.setDob("dob");
+    holder.setEmail("email");
+    holder.setMobile("mobile");
+    holder.setName("name");
+    holder.setNominee("nominee");
+    holder.setPan("pan");
+    holderList.add(holder);
+    holders.setHolder(holderList);
+    profile.setHolders(holders);
+    accountData.setProfile(profile);
+    accountData.setType("type");
+    SetuDataResponse.Transactions transactions = new SetuDataResponse.Transactions();
+    List<SetuDataResponse.Transactions.Transaction> transactionList = new ArrayList<>();
+    SetuDataResponse.Transactions.Transaction transaction = new SetuDataResponse.Transactions.Transaction();
+    transaction.setTxnId("txnId");
+    transaction.setAmount("amount");
+    transaction.setNarration("narration");
+    transaction.setType("type");
+    transaction.setMode("mode");
+    transaction.setCurrentBalance("currentBalance");
+    transaction.setTransactionTimestamp("2022-01-01T00:00:00Z");
+    transaction.setValueDate("2022-01-01T00:00:00Z");
+    transaction.setReference("reference");
+    transactionList.add(transaction);
+    transactions.setTransaction(transactionList);
+    accountData.setTransactions(transactions);
+    accountLevelData.setInformationPayload(accountData);
+    accountLevelDataList.add(accountLevelData);
+    dataPayload.setData(accountLevelDataList);
+    dataPayloads.add(dataPayload);
+    setuDataResponse.setDataPayload(dataPayloads);
+  
+    // Set up the mocked interactions
+    when(setuFIUService.getData(anyString())).thenReturn(setuDataResponse);
+    when(repositoryFacade.getAccountIfItExists(anyString(), anyString(), anyString())).thenReturn(Optional.empty());
+  
+    // Call the method under test
+    fiuService.getAndSaveData(session);
+  
+    // Verify the interactions
+    verify(setuFIUService).getData(anyString());
+    verify(repositoryFacade, times(dataPayloads.size())).getAccountIfItExists(anyString(), anyString(), anyString());
+    verify(repositoryFacade, times(dataPayloads.size())).saveAccount(any(Account.class));
+    verify(repositoryFacade, times(dataPayloads.size())).saveTransactions(anySet());
+  }
 
 //  @Test
 //  public void testUpdateConsentAndHandleFromNotification_ActiveConsent_NotExisting() throws JsonProcessingException {
